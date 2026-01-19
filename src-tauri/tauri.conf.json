@@ -1,20 +1,23 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "ebay-inventory",
+  "productName": "eBay-Inventory",
   "version": "0.1.0",
   "identifier": "com.bennettsmrdel.ebay-inventory",
   "build": {
+    "beforeBuildCommand": "npm run build",
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },
   "app": {
     "windows": [
       {
-        "title": "ebay-inventory",
-        "width": 800,
-        "height": 600
+        "title": "eBay Inventory",
+        "width": 1500,
+        "height": 800,
+        "maximized": true,
+        "fullscreen": false,
+        "resizable": true
       }
     ],
     "security": {
@@ -24,6 +27,7 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "createUpdaterArtifacts": true,
     "icon": [
       "icons/icon.ico",
       "icons/32x32.png",
@@ -31,5 +35,18 @@
       "icons/128x128@2x.png",
       "icons/icon.icns"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "active": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEM3OTcxNDU2QTQ1OEI3NUEKUldSYXQxaWtWaFNYeDgrRWY1REMraHdSanJsMGdWSWZ5OHdNdHJRZXZjZTV0TUczdld5YTlVOGwK",
+      "endpoints": [
+        "https://raw.githubusercontent.com/Midwest-Diesel/ebay-inventory/refs/heads/main/latest.json"
+      ],
+      "dialog": false,
+      "windows": {
+        "installMode": "passive"
+      }
+    }
   }
 }

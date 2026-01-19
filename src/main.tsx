@@ -1,5 +1,6 @@
 import ReactDOM from "react-dom/client";
+import { invoke } from "@tauri-apps/api/core";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <h1>Hello World</h1>
+  <button onClick={() => invoke('install_update')}>update</button>
 );
