@@ -1,0 +1,62 @@
+.select {
+  cursor: pointer;
+
+  &--label-space-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    select {
+      margin: 0.3rem 0;
+    }
+  }
+
+  &--label-inline {
+    margin-left: 0.5rem;
+  }
+
+  &--label-full-width {
+    width: 100%;
+  }
+
+  &--label-stack {
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+  }
+
+  &--large {
+    padding: 1rem;
+    font-size: var(--font-md);
+  }
+
+  &--label-bold {
+    font-weight: bold;
+    
+    select {
+      margin-top: 0.2rem;
+    }
+  }
+}
+
+.select-customer-dialog {
+  .dialog__content {
+    overflow-y: visible;
+  }
+}
+
+
+select {
+  background-color: var(--grey-light-1);
+  color: white;
+  border: none;
+  border-radius: 0.3rem;
+  
+  option {
+    border-radius: 0;
+  }
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+}

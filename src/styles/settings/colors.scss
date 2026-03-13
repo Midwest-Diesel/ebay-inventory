@@ -1,0 +1,53 @@
+:root {
+  --yellow-1: #EFC112;
+  --yellow-2: #F7CB27;
+  --yellow-3: #f7e927;
+  --yellow-light-1: #FAE184;
+
+  --grey-dark-1: #252525;
+  --grey-dark-2: #282828;
+  --grey-dark-3: #424242;
+  --grey-dark-4: #414141;
+  --grey-light-1: #4f4f4f;
+  --grey-light-2: #5F5F5F;
+  --grey-light-3: #777777;
+  --grey-light-4: #B8B8B8;
+  --grey-light-5: #E5E5E5;
+
+  --grey-dark-1_opac-1: #252525a4;
+
+  --black-1: rgb(20, 20, 20);
+
+  --green-1: #339C2A;
+  --green-2: #5aa753;
+  --green-light-1: #30B81D;
+  --green-light-2: #36d321;
+  --green-dark-1: #125e08;
+  --green-dark-2: #146e09;
+  --red-1: #AC3939;
+  --red-2: #f53535;
+  --red-3: #ca4949;
+  --orange-1: #FF7F27;
+  --blue-dark-1: #09278a;
+  --blue-dark-2: #1c48da;
+  --blue-1: #3989AC;
+  --blue-light-1: #4caed8;
+  --blue-light-2: #54bbe7;
+  --blue-light-3: #6fcff8;
+
+  --pink-1: #d46ca9;
+  --purple-1: #7d56e7;
+
+  --bg-color-1: var(--grey-dark-1);
+
+  --status-ziegler: var(--purple-1);
+  --status-new: var(--blue-light-1);
+  --status-rebuilt: var(--green-light-1);
+  --status-recon: var(--green-light-1);
+  --status-on-engine: var(--green-light-1);
+  --status-NTO: var(--blue-light-1);
+  --status-special: var(--yellow-2);
+  --status-sold: var(--red-2);
+  --status-hold: var(--orange-1);
+  --status-humpy: var(--orange-1);
+}

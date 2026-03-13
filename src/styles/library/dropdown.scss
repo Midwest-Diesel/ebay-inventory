@@ -1,0 +1,261 @@
+.dropdown {
+  list-style: none;
+  margin: 0;
+  position: relative;
+  display: inline-block;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+  color: white;
+  padding: 0;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+
+  &__label {
+    margin-top: 0.5rem;
+  }
+
+  &__container {
+    position: relative;
+    height: 30px;
+    margin: 0.4rem 0;
+    width: 100%;
+
+    &:has(.dropdown--no-margin) {
+      margin: 0;
+    }
+  }
+
+  &__arrow {
+    align-self: center;
+    height: 12px;
+  }
+
+  &__option {
+    background-color: var(--grey-light-1);
+    padding: 0.2rem;
+    width: 100%;
+    transition: all ease-in-out 0.3s;
+    font-size: var(--font-xsm);
+
+    &--selected {
+      border: 2px solid black;
+      padding-right: 0.8rem;
+    }
+
+    &--disabled {
+      color: var(--grey-light-3);
+
+      &:hover {
+        color: var(--grey-light-3) !important;
+      }
+    }
+
+    &:nth-child(even) {
+      background-color: var(--grey-light-2);
+    }
+    
+    &:last-child {
+      border-bottom-left-radius: 0.4rem;
+      border-bottom-right-radius: 0.4rem;
+    }
+
+    &:hover {
+      color: var(--yellow-1);
+    }
+  }
+
+  &--small {
+    max-width: 10rem;
+  }
+
+  &--label-stack {
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+
+    p {
+      margin-bottom: 0.2rem;
+    }
+
+    .dropdown__container {
+      margin-top: -0.1rem;
+    }
+  }
+
+  &--label-bold {
+    p {
+      font-weight: bold;
+    }
+  }
+
+  &--label-full-width {
+    width: 100%;
+  }
+
+  &--label-full-height {
+    height: 100%;
+  }
+
+  &--fill {
+    box-shadow: none;
+  }
+
+  &--label-space-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .dropdown__label {
+      width: 100%;
+    }
+  }
+}
+
+.dropdown--fill li {
+  padding: 0.2rem 0 0 0.3rem;
+  border: none;
+  height: 100%;
+}
+
+
+.dropdown-input {
+  list-style: none;
+  margin: 0;
+  position: relative;
+  display: inline-block;
+  user-select: none;
+  -webkit-user-select: none;
+  padding: 0;
+  width: 100%;
+  border: none;
+  color: var(--grey-dark-1);
+  cursor: pointer;
+
+  &__label {
+    margin-top: 0.5rem;
+  }
+
+  &__container {
+    position: relative;
+    height: 30px;
+    margin: 0.4rem 0;
+    width: 100%;
+
+    &:has(.dropdown-input--no-margin) {
+      margin: 0;
+    }
+  }
+
+  &__arrow {
+    align-self: center;
+    height: 12px;
+  }
+
+  .dropdown__arrow {
+    background-color: var(--grey-light-3);
+    position: absolute;
+    right: 0.12rem;
+    height: 1.4rem;
+    top: 0.12rem;
+    padding: 0.2rem 0.2rem 0.2rem 0.3rem;
+  }
+
+  .dropdown__option {
+    background-color: white;
+    padding: 0.1rem;
+    border-bottom: 1px solid var(--grey-light-4);
+    min-height: 1.632rem;
+
+    &--selected {
+      border-bottom: 2px solid black;
+    }
+
+    &:last-child {
+      border-radius: 0;
+    }
+
+    &:hover {
+      background-color: var(--grey-light-4);
+      color: black;
+    }
+  }
+
+  &__menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    z-index: 2;
+    background-color: white;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+
+  &__menu--open {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &__menu-scroll {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #5a5a5a #313131;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--grey-dark-3);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #5a5a5a;
+      border-radius: 3px;
+    }
+  }
+
+  .dropdown-input__option--highlighted {
+    background-color: var(--grey-light-4);
+    color: black;
+  }
+
+  &--small {
+    max-width: 10rem;
+  }
+
+  &--label-stack {
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+
+    p {
+      margin-bottom: 0.2rem;
+    }
+
+    .dropdown__container {
+      margin-top: -0.1rem;
+    }
+  }
+
+  &--label-bold {
+    p {
+      font-weight: bold;
+    }
+  }
+
+  &--label-full-width {
+    width: 100%;
+  }
+
+  &--label-full-height {
+    height: 100%;
+  }
+
+  &--fill {
+    box-shadow: none;
+  }
+}

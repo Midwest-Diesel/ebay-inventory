@@ -4,8 +4,6 @@ use std::{fs::remove_file, process::Command, env};
 use std::{fs::File, io::copy};
 use std::io::{self, Write};
 use reqwest::Client;
-use std::path::{Path};
-use zip::read::ZipArchive;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
