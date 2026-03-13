@@ -82,12 +82,6 @@ async fn download_update() -> Result<(), Box<dyn std::error::Error>> {
     "https://github.com/Midwest-Diesel/ebay-inventory/releases/download/v{}/{}_{}_x64-setup.exe",
     version_tag, product_name, version_file
   );
-  let response = client.get(&url).send().await?;
-  let zip_path = format!("C:/MWD/repos/content/ebay-inventory/updates/{}_{}_x64-setup.nsis.zip", product_name, version_file);
-  let mut dest = File::create(&zip_path)?;
-  copy(&mut response.bytes().await?.as_ref(), &mut dest)?;
-  println!("Update downloaded successfully.");
-
   let exe_path = format!(
     "C:/MWD/repos/content/ebay-inventory/updates/{}_{}_x64-setup.exe",
     product_name,
@@ -97,13 +91,14 @@ async fn download_update() -> Result<(), Box<dyn std::error::Error>> {
   let response = client.get(&url).send().await?;
   let mut dest = File::create(&exe_path)?;
   copy(&mut response.bytes().await?.as_ref(), &mut dest)?;
+  drop(dest);
 
   println!("Installer downloaded successfully.");
 
   Command::new(&exe_path)
     .args(["/S", &format!("/D={}", install_dir)])
     .spawn()?;
-  
+
   println!("Installer executed.");
   Ok(())
 }
