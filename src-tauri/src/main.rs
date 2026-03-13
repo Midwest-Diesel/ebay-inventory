@@ -40,7 +40,7 @@ async fn install_update() {
   println!("Update successful, restarting app...");
   io::stdout().flush().unwrap();
 
-  let product_name = "eBay Inventory";
+  let product_name = "eBay-Inventory";
   let install_dir = r"C:\MWD\repos\content\ebay-inventory";
 
   let batch_script = format!(r#"
@@ -63,7 +63,7 @@ async fn install_update() {
 
 async fn download_update() -> Result<(), Box<dyn std::error::Error>> {
   let (product_name, update_json_url, install_dir) = (
-      "eBay Inventory",
+      "eBay-Inventory",
       "https://raw.githubusercontent.com/Midwest-Diesel/ebay-inventory/refs/heads/main/latest.json",
       r"C:/MWD/repos/content/ebay-inventory");
 
@@ -79,36 +79,31 @@ async fn download_update() -> Result<(), Box<dyn std::error::Error>> {
   let version_tag = res.version.trim_start_matches('v');
   let version_file = version_tag.replace("-staging", "");
   let url = format!(
-    "https://github.com/Midwest-Diesel/ebay-inventory/releases/download/v{}/{}_{}_x64-setup.nsis.zip",
+    "https://github.com/Midwest-Diesel/ebay-inventory/releases/download/v{}/{}_{}_x64-setup.exe",
     version_tag, product_name, version_file
   );
-  let response = client.get(url).send().await?;
+  let response = client.get(&url).send().await?;
   let zip_path = format!("C:/MWD/repos/content/ebay-inventory/updates/{}_{}_x64-setup.nsis.zip", product_name, version_file);
   let mut dest = File::create(&zip_path)?;
   copy(&mut response.bytes().await?.as_ref(), &mut dest)?;
   println!("Update downloaded successfully.");
 
-  let mut archive = ZipArchive::new(File::open(&zip_path)?)?;
-  for i in 0..archive.len() {
-    let mut file = archive.by_index(i)?;
-    let outpath = Path::new("C:/MWD/repos/content/ebay-inventory/updates/").join(file.name());
-    
-    if file.name().ends_with('/') {
-      std::fs::create_dir_all(&outpath)?;
-    } else {
-      if let Some(p) = outpath.parent() {
-        std::fs::create_dir_all(p)?;
-      }
-      let mut out_file = File::create(&outpath)?;
-      copy(&mut file, &mut out_file)?;
-    }
-  }
-  println!("Update extracted successfully.");
+  let exe_path = format!(
+    "C:/MWD/repos/content/ebay-inventory/updates/{}_{}_x64-setup.exe",
+    product_name,
+    version_file
+  );
 
-  let installer_path = format!("C:/MWD/repos/content/ebay-inventory/updates/{}_{}_x64-setup.exe", product_name, version_file);
-  let _ = Command::new(installer_path)
+  let response = client.get(&url).send().await?;
+  let mut dest = File::create(&exe_path)?;
+  copy(&mut response.bytes().await?.as_ref(), &mut dest)?;
+
+  println!("Installer downloaded successfully.");
+
+  Command::new(&exe_path)
     .args(["/S", &format!("/D={}", install_dir)])
     .spawn()?;
+  
   println!("Installer executed.");
   Ok(())
 }
