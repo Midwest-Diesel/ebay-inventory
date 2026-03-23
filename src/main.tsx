@@ -3,8 +3,9 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'jotai';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './components/App';
-import './styles/globals.scss';
 import ErrorBoundary from './components/ErrorBoundry';
+import './styles/globals.scss';
+import { DialogProvider } from '@midwest-diesel/mwd-ui';
 
 
 const app = createRoot(document.getElementById('root')!);
@@ -20,7 +21,9 @@ app.render(
     <Provider>
       <QueryClientProvider client={queryClient}>
         <ErrorBoundary>
-          <App />
+          <DialogProvider>
+            <App />
+          </DialogProvider>
         </ErrorBoundary>
       </QueryClientProvider>
     </Provider>
