@@ -19,7 +19,6 @@ const isContainerRunning = (): boolean => {
 
 const waitForPostgres = async ({ host = '', port = 0, user = '', password = '', database = '', timeoutMs = 15000, intervalMs = 500 }) => {
   const start = Date.now();
-  // eslint-disable-next-line
   while (true) {
     try {
       const client = new pg.Client({ host, port, user, password, database });

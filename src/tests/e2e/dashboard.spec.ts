@@ -13,6 +13,7 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('Basic Functionality', () => {
   test('Display dashboard', async ({ page }) => {
+    console.log(page);
     expect(1 + 1).toEqual(2);
   });
 });

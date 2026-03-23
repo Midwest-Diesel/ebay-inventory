@@ -1,0 +1,13 @@
+.layout {
+  &__container {
+    display: flex;
+  }
+
+  &__main-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-height: calc(100vh - 2rem);
+  }
+}

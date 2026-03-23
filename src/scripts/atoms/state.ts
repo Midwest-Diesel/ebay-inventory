@@ -2,7 +2,7 @@ import { atom } from "jotai";
 
 const user = {
   id: null,
-  username: null,
+  username: null
 } as any;
 
 export const userAtom = atom<User>(user);

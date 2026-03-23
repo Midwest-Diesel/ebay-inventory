@@ -21,7 +21,7 @@ export const usePreventNavigation = (shouldPrevent: boolean, text: string) => {
         } else if (newTabElmt) {
           // newTab();
         } else if (tab) {
-          const tabId = Number(tab.getAttribute('data-tabid'));
+          // const tabId = Number(tab.getAttribute('data-tabid'));
           // changeTab(tabId);
         } else if (foward) {
           // forward();

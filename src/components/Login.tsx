@@ -3,8 +3,8 @@ import { userAtom } from "@/scripts/atoms/state";
 import { Layout } from "./Layout";
 import { FormEvent, useState } from "react";
 import Error from "./Error";
-import Input from "./library/Input";
-import Button from "./library/Button";
+import { Button, Input } from "@midwest-diesel/mwd-ui";
+import { getUser, loginUser } from "@/scripts/services/userService";
 
 
 export default function Login() {
@@ -15,19 +15,19 @@ export default function Login() {
   const [error, setError] = useState('');
 
   const handleGetUser = async () => {
-    // const res = await getUser();
-    // (setUserData as any)(res);
+    const res = await getUser();
+    (setUserData as any)(res);
   };
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
-    // const error = await loginUser({ username, password });
-    // setError(error);
-    // if (error) return;
-    // localStorage.setItem('username', username);
-    // setLoginBtnVisible(false);
-    // await handleGetUser();
-    // location.reload();
+    const error = await loginUser({ username, password });
+    setError(error);
+    if (error) return;
+    localStorage.setItem('username', username);
+    setLoginBtnVisible(false);
+    await handleGetUser();
+    location.reload();
   };
 
 

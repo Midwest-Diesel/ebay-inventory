@@ -17,9 +17,9 @@ export function Layout({ children, title }: Props) {
   useEffect(() => {
     document.title = title ? `${title} | ${baseTitle}` : baseTitle;
 
-    document.addEventListener('wheel', (event: any) => {
-      if (event.target.type === 'number') {
-        event.preventDefault();
+    document.addEventListener('wheel', (e: any) => {
+      if (e.target.type === 'number') {
+        e.preventDefault();
       }
     }, { passive: false });
   }, []);
