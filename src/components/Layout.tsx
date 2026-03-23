@@ -26,7 +26,7 @@ export function Layout({ children, title }: Props) {
 
 
   return (
-    <div>
+    <div style={{ height: '100%' }}>
       { user && <Navbar /> }
       <div className="layout__container">
         <div className="layout__main-content">

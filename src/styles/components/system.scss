@@ -1,0 +1,23 @@
+.system-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-left: 2rem;
+
+  h3 {
+    margin-bottom: 0.3rem;
+  }
+
+  &__status-text {
+    margin: 0.3rem 0;
+    color: var(--green-light-1);
+  }
+
+  &__username {
+    margin-bottom: 0.7rem;
+
+    span {
+      font-weight: bold;
+    }
+  }
+}
