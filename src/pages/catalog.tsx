@@ -1,6 +1,6 @@
 import { Layout } from "@/components/Layout";
 import useAutoSave from "@/hooks/useAutoSave";
-import { getAddonItems } from "@/scripts/services/ebayService";
+import { editBulkAddonItems, editItemListingStatus, getAddonItems } from "@/scripts/services/ebayService";
 import { Button, Input, Select, Table, TextArea } from "@midwest-diesel/mwd-ui";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -27,8 +27,13 @@ export default function Catalog() {
     }));
   };
 
+  const onClickAddItem = async (itemId: number) => {
+    await editItemListingStatus(itemId, 'COMPLETE');
+    setItems(items.filter((i) => i.id !== itemId));
+  };
+
   useAutoSave(items, async () => {
-    
+    await editBulkAddonItems(items.map((i) => ({ ...i, qty: Number(i.qty) })));
   }, { ignoreFirstSave: true });
   
 
@@ -105,7 +110,7 @@ export default function Catalog() {
                     <option>Caterpillar</option>
                   </Select>
                 </td>
-                <td><Button>Add</Button></td>
+                <td><Button onClick={() => onClickAddItem(item.id)}>Add</Button></td>
               </tr>
             );
           })}

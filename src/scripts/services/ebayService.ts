@@ -38,3 +38,26 @@ export const createOrReplaceInventoryItem = async (item: CatalogItem) => {
     alert(`Error in [createOrReplaceInventoryItem] ${error}`);
   }
 };
+
+// === PATCH routes === //
+
+export const editItemListingStatus = async (id: number, listingStatus: ListingStatus) => {
+  try {
+    await api.patch(`/api/ebay/listing-status`, { id, listingStatus });
+  } catch (error) {
+    console.error(error);
+    alert(`Error in [editItemListingStatus] ${error}`);
+  }
+};
+
+
+// === PUT routes === //
+
+export const editBulkAddonItems = async (items: AddOnItem[]) => {
+  try {
+    await api.put(`/api/ebay/items/bulk`, { items });
+  } catch (error) {
+    console.error(error);
+    alert(`Error in [editBulkAddonItems] ${error}`);
+  }
+};

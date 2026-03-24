@@ -38,11 +38,12 @@ export default function System() {
   return (
     <Layout title="System">
       <div className="system-page">
+        <a href="/" className="back-link">Back</a>
+
         <h3>v{ version }</h3>
         <p className="system-page__username">Logged in as <span>{ cap(user.username) }</span></p>
         { !status && <Button variant={['fit']} onClick={checkForUpdates}>Check For Updates</Button> }
         { status && <p className="system-page__status-text">{ status }</p> }
-        <br />
         
         <Button variant={['fit']} onClick={logout}>Logout</Button>
       </div>
