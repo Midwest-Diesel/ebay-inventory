@@ -14,6 +14,12 @@ type Toast = {
   duration?: number
 };
 
+type Picture = {
+  id: string
+  name: string
+  url: string
+};
+
 type ListingStatus = 'PENDING' | 'COMPLETE';
 type Manufacturer = 'Caterpillar' | null;
 type Condition = 'NEW_OTHER' | 'USED_GOOD' | 'FOR_PARTS_OR_NOT_WORKING' | 'GOOD_REFURBISHED';

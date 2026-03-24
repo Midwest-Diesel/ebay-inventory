@@ -1,6 +1,8 @@
+import PicturesDialog from "@/components/dialogs/PicturesDialog";
 import { Layout } from "@/components/Layout";
 import useAutoSave from "@/hooks/useAutoSave";
 import { createOrReplaceInventoryItem, editBulkAddonItems, editItemListingStatus, getAddonItems } from "@/scripts/services/ebayService";
+import { getImagesFromStockNum } from "@/scripts/services/imagesService";
 import { Button, Input, Select, Table, TextArea } from "@midwest-diesel/mwd-ui";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -8,11 +10,19 @@ import { useEffect, useState } from "react";
 
 export default function Catalog() {
   const [items, setItems] = useState<AddOnItem[]>([]);
+  const [picturesDialogOpen, setPicturesDialogOpen] = useState(false);
+  const [stockNumForPics, setStockNumForPics] = useState('');
 
-  const { data: itemsData } = useQuery({
+  const { data: itemsData } = useQuery<AddOnItem[]>({
     queryKey: ['items'],
     queryFn: () => getAddonItems('PENDING')
   });
+
+  const { data: pictures = [] } = useQuery<Picture[]>({
+    queryKey: ['pictures', stockNumForPics],
+    queryFn: () => getImagesFromStockNum(stockNumForPics),
+    enabled: Boolean(stockNumForPics)
+  })
 
   useEffect(() => {
     if (itemsData && items.length === 0) {
@@ -61,6 +71,11 @@ export default function Catalog() {
     await createOrReplaceInventoryItem(catalogItem);
   };
 
+  const onClickOpenPictures = (stockNum: string) => {
+    setPicturesDialogOpen(true);
+    setStockNumForPics(stockNum);
+  };
+
   useAutoSave(items, async () => {
     await editBulkAddonItems(items.map((i) => ({ ...i, qty: Number(i.qty) })));
   }, { ignoreFirstSave: true });
@@ -68,6 +83,15 @@ export default function Catalog() {
 
   return (
     <Layout>
+      {picturesDialogOpen &&
+        <PicturesDialog
+          open={picturesDialogOpen}
+          setOpen={setPicturesDialogOpen}
+          pictures={pictures}
+          stockNum={stockNumForPics}
+        />
+      }
+
       <a href="/" className="back-link">Back</a>
       <h1>Pending Items</h1>
 
@@ -136,7 +160,7 @@ export default function Catalog() {
                   </Select>
                 </td>
                 <td>
-                  <Button variant={['no-style']} className="image-btn">
+                  <Button variant={['no-style']} className="image-btn" onClick={() => onClickOpenPictures(item.stockNum)}>
                     <img src="/images/image.svg" alt="" />
                   </Button>
                 </td>

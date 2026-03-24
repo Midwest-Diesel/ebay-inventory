@@ -4,11 +4,29 @@ use std::{fs::remove_file, process::Command, env};
 use std::{fs::File, io::copy};
 use std::io::{self, Write};
 use reqwest::Client;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
+use tauri::AppHandle;
+use tauri_plugin_opener::OpenerExt;
+use base64::engine::general_purpose::STANDARD as BASE64_STANDARD;
+use base64::Engine;
 
 #[derive(Debug, Deserialize)]
 struct LatestVersionInfo {
   version: String,
+}
+
+#[derive(Deserialize, Serialize)]
+struct PictureArgs {
+  part_num: Option<String>,
+  stock_num: Option<String>,
+  name: Option<String>,
+  pic_type: Option<String>
+}
+
+#[derive(Deserialize, Serialize)]
+struct Picture {
+  url: String,
+  name: String
 }
 
 
@@ -17,8 +35,12 @@ fn main() {
 
   tauri::Builder::default()
     .plugin(tauri_plugin_updater::Builder::new().build())
+    .plugin(tauri_plugin_opener::init())
+    .plugin(tauri_plugin_shell::init())
     .invoke_handler(tauri::generate_handler![
       install_update,
+      view_file,
+      get_stock_num_images
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
@@ -99,4 +121,45 @@ async fn download_update() -> Result<(), Box<dyn std::error::Error>> {
 
   println!("Installer executed.");
   Ok(())
+}
+
+#[tauri::command]
+fn view_file(app_handle: AppHandle, filepath: String) -> Result<(), String> {
+  app_handle
+    .opener()
+    .open_path(filepath, None::<&str>)
+    .map_err(|e| format!("Failed to open: {}", e))
+}
+
+#[tauri::command]
+async fn get_stock_num_images(picture_args: PictureArgs) -> Result<Vec<Picture>, String> {
+  let path = "\\\\MWD1-SERVER/Server/Pictures/sn_specific";
+  let target_dir = format!("{}/{}", path, picture_args.stock_num.as_deref().unwrap_or(""));
+  let mut pictures = Vec::new();
+
+  match std::fs::read_dir(&target_dir) {
+    Ok(entries) => {
+      for entry in entries {
+        let pic_entry = match entry {
+          Ok(entry) => entry,
+          Err(e) => return Err(format!("Error reading entry: {}", e)),
+        };
+        let pic_name = pic_entry.file_name().into_string().map_err(|_| "Invalid file name")?;
+        let pic_path = pic_entry.path();
+
+        let data = match std::fs::read(&pic_path) {
+          Ok(data) => data,
+          Err(e) => return Err(format!("Error reading image data: {}", e)),
+        };
+
+        let base64_data = BASE64_STANDARD.encode(&data);
+        pictures.push(Picture {
+          url: base64_data,
+          name: pic_name,
+        });
+      }
+      Ok(pictures)
+    }
+    Err(_) => Ok(vec![]),
+  }
 }
