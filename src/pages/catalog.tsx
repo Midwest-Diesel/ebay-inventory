@@ -1,6 +1,6 @@
 import { Layout } from "@/components/Layout";
 import useAutoSave from "@/hooks/useAutoSave";
-import { editBulkAddonItems, editItemListingStatus, getAddonItems } from "@/scripts/services/ebayService";
+import { createOrReplaceInventoryItem, editBulkAddonItems, editItemListingStatus, getAddonItems } from "@/scripts/services/ebayService";
 import { Button, Input, Select, Table, TextArea } from "@midwest-diesel/mwd-ui";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -27,9 +27,38 @@ export default function Catalog() {
     }));
   };
 
-  const onClickAddItem = async (itemId: number) => {
-    await editItemListingStatus(itemId, 'COMPLETE');
-    setItems(items.filter((i) => i.id !== itemId));
+  const onClickAddItem = async (item: AddOnItem) => {
+    await editItemListingStatus(item.id, 'COMPLETE');
+    setItems(items.filter((i) => i.id !== item.id));
+
+    const catalogItem: CatalogItem = {
+      sku: item.stockNum,
+      availability: {
+        shipToLocationAvailability: {
+          quantity: item.qty
+        }
+      },
+      condition: item.condition,
+      packageWeightAndSize: {
+        dimensions: {
+          length: 0,
+          width: 0,
+          height: 0,
+          unit: 'INCH'
+        },
+        weight: {
+          value: 0,
+          unit: 'POUND'
+        },
+        packageType: 'MAILING_BOX'
+      },
+      product: {
+        title: item.title,
+        description: item.desc,
+        imageUrls: item.imageUrls
+      }
+    };
+    await createOrReplaceInventoryItem(catalogItem);
   };
 
   useAutoSave(items, async () => {
@@ -45,18 +74,14 @@ export default function Catalog() {
       <Table className="catalog-table">
         <thead>
           <tr>
-            <th>
-              <Button variant={['no-style']} className="image-btn">
-                <img src="/images/image.svg" alt="" />
-              </Button>
-              SKU
-            </th>
+            <th>SKU</th>
             <th>Title</th>
             <th>Desc</th>
             <th>Addon Qty</th>
             <th>Qty</th>
             <th>Condition</th>
             <th>Manufacturer</th>
+            <th>Images</th>
             <th></th>
           </tr>
         </thead>
@@ -110,7 +135,12 @@ export default function Catalog() {
                     <option>Caterpillar</option>
                   </Select>
                 </td>
-                <td><Button onClick={() => onClickAddItem(item.id)}>Add</Button></td>
+                <td>
+                  <Button variant={['no-style']} className="image-btn">
+                    <img src="/images/image.svg" alt="" />
+                  </Button>
+                </td>
+                <td><Button onClick={() => onClickAddItem(item)}>Add</Button></td>
               </tr>
             );
           })}
