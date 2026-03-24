@@ -14,10 +14,29 @@ type Toast = {
   duration?: number
 };
 
+type ListingStatus = 'PENDING' | 'COMPLETE';
+type Manufacturer = 'Caterpillar' | null;
 type Condition = 'NEW_OTHER' | 'USED_GOOD' | 'FOR_PARTS_OR_NOT_WORKING' | 'GOOD_REFURBISHED';
 type LengthUnit = 'INCH' | 'FEET' | 'CENTIMETER' | 'METER';
 type WeightUnit = 'POUND' | 'KILOGRAM' | 'OUNCE' | 'GRAM';
 type PackageType = 'MAILING_BOX'; // https://developer.ebay.com/api-docs/sell/inventory/types/slr:PackageTypeEnum
+
+type AddOnItem = {
+  id: number
+  stockNum: string
+  partNum: string
+  title: string
+  desc: string
+  manufacturer: Manufacturer
+  condition: Condition
+  listingStatus: ListingStatus
+  addonQty: number
+  qty: number
+  localImages: string[]
+  imageUrls: string[]
+  createdAt: Date
+  updatedAt: Date
+};
 
 type CatalogItem = {
   sku: string

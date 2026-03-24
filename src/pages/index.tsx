@@ -11,6 +11,7 @@ export default function Home() {
           <a href="/catalog">Catalog</a>
           <a href="/drafts">Drafts</a>
           <a href="/listings">Listings</a>
+          <a href="/system">System</a>
         </div>
       </section>
     </Layout>

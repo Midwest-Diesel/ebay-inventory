@@ -1,0 +1,116 @@
+import { Layout } from "@/components/Layout";
+import useAutoSave from "@/hooks/useAutoSave";
+import { getAddonItems } from "@/scripts/services/ebayService";
+import { Button, Input, Select, Table, TextArea } from "@midwest-diesel/mwd-ui";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+
+
+export default function Catalog() {
+  const [items, setItems] = useState<AddOnItem[]>([]);
+
+  const { data: itemsData } = useQuery({
+    queryKey: ['items'],
+    queryFn: () => getAddonItems('PENDING')
+  });
+
+  useEffect(() => {
+    if (itemsData && items.length === 0) {
+      setItems(itemsData);
+    }
+  }, [itemsData]);
+
+  const onChangeEditItem = (item: AddOnItem) => {
+    setItems(items.map((i) => {
+      if (i.id !== item.id) return i;
+      return item;
+    }));
+  };
+
+  useAutoSave(items, async () => {
+    
+  }, { ignoreFirstSave: true });
+  
+
+  return (
+    <Layout>
+      <a href="/" className="back-link">Back</a>
+      <h1>Pending Items</h1>
+
+      <Table className="catalog-table">
+        <thead>
+          <tr>
+            <th>
+              <Button variant={['no-style']} className="image-btn">
+                <img src="/images/image.svg" alt="" />
+              </Button>
+              SKU
+            </th>
+            <th>Title</th>
+            <th>Desc</th>
+            <th>Addon Qty</th>
+            <th>Qty</th>
+            <th>Condition</th>
+            <th>Manufacturer</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((item) => {
+            return (
+              <tr key={item.id}>
+                <td>
+                  <Input
+                    value={item.stockNum}
+                    onChange={(e) => onChangeEditItem({ ...item, stockNum: e.target.value })}
+                  />
+                </td>
+                <td>
+                  <TextArea
+                    value={item.title}
+                    onChange={(e) => onChangeEditItem({ ...item, title: e.target.value })}
+                  />
+                </td>
+                <td>
+                  <TextArea
+                    value={item.desc}
+                    onChange={(e) => onChangeEditItem({ ...item, desc: e.target.value })}
+                  />
+                </td>
+                <td style={{ textAlign: 'center' }}>{ item.addonQty }</td>
+                <td>
+                  <Input
+                    value={item.qty || ''}
+                    onChange={(e: any) => onChangeEditItem({ ...item, qty: e.target.value })}
+                    type="number"
+                  />
+                </td>
+                <td>
+                  <Select
+                    value={item.condition}
+                    onChange={(e) => onChangeEditItem({ ...item, condition: e.target.value as Condition })}
+                  >
+                    <option>NEW_OTHER</option>
+                    <option>USED_GOOD</option>
+                    <option>FOR_PARTS_OR_NOT_WORKING</option>
+                    <option>GOOD_REFURBISHED</option>
+                  </Select>
+                </td>
+                <td>
+                  <Select
+                    value={item.manufacturer ?? ''}
+                    onChange={(e) => onChangeEditItem({ ...item, manufacturer: e.target.value as Manufacturer })}
+                  >
+                    <option value="">Empty</option>
+                    <option>Caterpillar</option>
+                  </Select>
+                </td>
+                <td><Button>Add</Button></td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Table>
+    </Layout>
+  );
+}

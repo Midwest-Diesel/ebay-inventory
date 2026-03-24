@@ -6,6 +6,16 @@ const INVENTORY_API_URL = isProd ? 'https://api.ebay.com/sell/inventory/v1' : 'h
 
 // === GET routes === //
 
+export const getAddonItems = async (listingStatus: ListingStatus): Promise<AddOnItem[]> => {
+  try {
+    const res = await api.get(`/api/ebay/${listingStatus}`);
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
 export const getInventoryItems = async (limit: number, offset: number): Promise<CatalogItem[]> => {
   try {
     const headers = { Authorization: import.meta.env.VITE_PUBLIC_EBAY_USER_TOKEN };
