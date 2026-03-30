@@ -7,6 +7,7 @@ import { isTauri } from "@tauri-apps/api/core";
 import { check } from "@tauri-apps/plugin-updater";
 import { Tooltip } from "@midwest-diesel/mwd-ui";
 import UpdateModal from "./modals/UpdateModal";
+import { getAccessToken, setAccessToken } from "@/scripts/services/ebayService";
 
 interface Props {
   children: any
@@ -45,6 +46,15 @@ export default function GlobalData({ children }: Props) {
       document.removeEventListener('auxclick', handleMiddleClick);
     };
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchData = async () => {
+      const res = await getAccessToken();
+      if (!res) await setAccessToken();
+    };
+    fetchData();
+  }, [user]);
 
   const handleGetUser = async () => {
     const res = await getUser();

@@ -29,6 +29,7 @@
     "@tanstack/react-query": "^5.90.21",
     "@tauri-apps/plugin-dialog": "^2.6.0",
     "@tauri-apps/plugin-opener": "^2.3.1",
+    "@tauri-apps/plugin-shell": "^2.3.5",
     "@tauri-apps/plugin-updater": "^2.8.1",
     "axios": "^1.13.6",
     "axios-cookiejar-support": "^6.0.5",

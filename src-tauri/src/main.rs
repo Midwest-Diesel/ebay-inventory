@@ -40,7 +40,8 @@ fn main() {
     .invoke_handler(tauri::generate_handler![
       install_update,
       view_file,
-      get_stock_num_images
+      get_stock_num_images,
+      get_env_var
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
@@ -121,6 +122,14 @@ async fn download_update() -> Result<(), Box<dyn std::error::Error>> {
 
   println!("Installer executed.");
   Ok(())
+}
+
+#[tauri::command]
+fn get_env_var(var_name: String) -> Result<String, String> {
+  if let Ok(val) = env::var(var_name) {
+    return Ok(val);
+  }
+  return Err("Couldn't find env variable".to_string());
 }
 
 #[tauri::command]

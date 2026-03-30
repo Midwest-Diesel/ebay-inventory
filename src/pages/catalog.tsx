@@ -1,7 +1,7 @@
 import PicturesDialog from "@/components/dialogs/PicturesDialog";
 import { Layout } from "@/components/Layout";
 import useAutoSave from "@/hooks/useAutoSave";
-import { createOrReplaceInventoryItem, editBulkAddonItems, editItemListingStatus, getAddonItems } from "@/scripts/services/ebayService";
+import { createOrReplaceInventoryItem, editBulkAddonItems, editItemListingStatus, getAddonItems, getInventoryItems } from "@/scripts/services/ebayService";
 import { getImagesFromStockNum } from "@/scripts/services/imagesService";
 import { Button, Input, Select, Table, TextArea } from "@midwest-diesel/mwd-ui";
 import { useQuery } from "@tanstack/react-query";
@@ -16,6 +16,11 @@ export default function Catalog() {
   const { data: itemsData } = useQuery<AddOnItem[]>({
     queryKey: ['items'],
     queryFn: () => getAddonItems('PENDING')
+  });
+
+  const { data: catalogItems } = useQuery({
+    queryKey: ['catalogItems'],
+    queryFn: () => getInventoryItems(20, 0)
   });
 
   const { data: pictures = [] } = useQuery<Picture[]>({
