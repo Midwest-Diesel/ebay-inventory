@@ -70,8 +70,7 @@ export const getAddonItems = async (listingStatus: ListingStatus): Promise<AddOn
 
 export const getInventoryItems = async (limit: number, offset: number): Promise<CatalogItem[]> => {
   try {
-    const headers = { Authorization: `Bearer ${accessToken}` };
-    const res = await api.get(`${INVENTORY_API_URL}/inventory_item?limit=${limit}&offset=${offset}`, { headers });
+    const res = await axios.get(`https://inventory-server.up.railway.app/api/ebay/get-inventory-items?limit=${limit}&offset=${offset}&isProd=${isProd}`);
     return res.data;
   } catch (error) {
     console.error(error);
