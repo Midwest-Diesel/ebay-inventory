@@ -4,9 +4,8 @@ import { invoke } from "../config/tauri";
 import { open } from '@tauri-apps/plugin-shell';
 
 
-let accessToken: string;
 const isProd = import.meta.env.PROD;
-const INVENTORY_API_URL = isProd ? 'https://api.ebay.com/sell/inventory/v1' : 'https://api.sandbox.ebay.com/sell/inventory/v1';
+const SERVER_URL = 'https://inventory-server.up.railway.app';
 
 // === GET routes === //
 
@@ -20,7 +19,7 @@ async function getEbayAuthCode(clientId: string, ruName: string, scopes: string)
     const interval = setInterval(async () => {
       try {
         if (requestCount >= maxRequests) reject('Max requests');
-        const res = await axios.get('https://inventory-server.up.railway.app/api/ebay/code', { withCredentials: true });
+        const res = await axios.get(`${SERVER_URL}/api/ebay/code`, { withCredentials: true });
         if (res.data.code) {
           clearInterval(interval);
           resolve(res.data.code);
@@ -41,7 +40,7 @@ export const setAccessToken = async () => {
     const scopes = encodeURIComponent(await invoke('get_env_var', { varName: 'SCOPES' }));
     const code = await getEbayAuthCode(clientId, ruName, scopes);
     const url = isProd ? 'https://api.ebay.com/identity/v1/oauth2/token' : 'https://api.sandbox.ebay.com/identity/v1/oauth2/token';
-    await axios.post('https://inventory-server.up.railway.app/api/ebay/token', { code, url, isProd }, { withCredentials: true });
+    await axios.post(`${SERVER_URL}/api/ebay/token`, { code, url, isProd }, { withCredentials: true });
   } catch (error) {
     console.error(error);
   }
@@ -49,8 +48,7 @@ export const setAccessToken = async () => {
 
 export const getAccessToken = async (): Promise<string | null> => {
   try {
-    const res = await axios.get('https://inventory-server.up.railway.app/api/ebay/session', { withCredentials: true });
-    accessToken = res.data.accessToken;
+    const res = await axios.get(`${SERVER_URL}/api/ebay/session`, { withCredentials: true });
     return res.data.accessToken;
   } catch (error) {
     console.log(error);
@@ -70,7 +68,8 @@ export const getAddonItems = async (listingStatus: ListingStatus): Promise<AddOn
 
 export const getInventoryItems = async (limit: number, offset: number): Promise<CatalogItem[]> => {
   try {
-    const res = await axios.get(`https://inventory-server.up.railway.app/api/ebay/get-inventory-items?limit=${limit}&offset=${offset}&isProd=${isProd}`);
+    const params = { limit, offset, isProd };
+    const res = await axios.get(`${SERVER_URL}/api/ebay/catalog-items`, { withCredentials: true, params });
     return res.data;
   } catch (error) {
     console.error(error);
@@ -82,8 +81,7 @@ export const getInventoryItems = async (limit: number, offset: number): Promise<
 
 export const createOrReplaceInventoryItem = async (item: CatalogItem) => {
   try {
-    const headers = { Authorization: `Bearer ${accessToken}` };
-    await api.post(`${INVENTORY_API_URL}/inventory_item/${item.sku}`, item, { headers });
+    await axios.post(`${SERVER_URL}/api/ebay/catalog-item`, { item, isProd }, { withCredentials: true });
   } catch (error) {
     console.error(error);
     alert(`Error in [createOrReplaceInventoryItem] ${error}`);
