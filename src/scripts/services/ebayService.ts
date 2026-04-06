@@ -36,8 +36,8 @@ async function getEbayAuthCode(clientId: string, ruName: string, scopes: string)
 export const setAccessToken = async () => {
   try {
     const clientId = await invoke('get_env_var', { varName: 'EBAY_CLIENT_ID' });
-    const ruName = await invoke('get_env_var', { varName: 'REDIRECT_URL' });
-    const scopes = encodeURIComponent(await invoke('get_env_var', { varName: 'SCOPES' }));
+    const ruName = await invoke('get_env_var', { varName: 'EBAY_REDIRECT_URL' });
+    const scopes = encodeURIComponent(await invoke('get_env_var', { varName: 'EBAY_SCOPES' }));
     const code = await getEbayAuthCode(clientId, ruName, scopes);
     const url = isProd ? 'https://api.ebay.com/identity/v1/oauth2/token' : 'https://api.sandbox.ebay.com/identity/v1/oauth2/token';
     await axios.post(`${SERVER_URL}/api/ebay/token`, { code, url, isProd }, { withCredentials: true });
