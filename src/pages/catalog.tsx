@@ -43,8 +43,7 @@ export default function Catalog() {
   };
 
   const onClickAddItem = async (item: AddOnItem) => {
-    await editItemListingStatus(item.id, 'COMPLETE');
-    setItems(items.filter((i) => i.id !== item.id));
+    // TODO: Upload local images
 
     const catalogItem: CatalogItem = {
       sku: item.stockNum,
@@ -56,13 +55,13 @@ export default function Catalog() {
       condition: item.condition,
       packageWeightAndSize: {
         dimensions: {
-          length: 0,
-          width: 0,
-          height: 0,
+          length: 10,
+          width: 10,
+          height: 10,
           unit: 'INCH'
         },
         weight: {
-          value: 0,
+          value: 10,
           unit: 'POUND'
         },
         packageType: 'MAILING_BOX'
@@ -73,12 +72,23 @@ export default function Catalog() {
         imageUrls: item.imageUrls
       }
     };
-    await createOrReplaceInventoryItem(catalogItem);
+    const error = await createOrReplaceInventoryItem(catalogItem);
+    if (error) return;
+
+    await editItemListingStatus(item.id, 'COMPLETE');
+    setItems(items.filter((i) => i.id !== item.id));
   };
 
   const onClickOpenPictures = (stockNum: string) => {
     setPicturesDialogOpen(true);
     setStockNumForPics(stockNum);
+  };
+
+  const onSelectPictures = (localImages: string[], stockNum: string) => {
+    setItems(items.map((item) => {
+      if (item.stockNum !== stockNum) return item;
+      return { ...item, localImages };
+    }));
   };
 
   useAutoSave(items, async () => {
@@ -94,6 +104,8 @@ export default function Catalog() {
           setOpen={setPicturesDialogOpen}
           pictures={pictures}
           stockNum={stockNumForPics}
+          items={items}
+          onSave={onSelectPictures}
         />
       }
 

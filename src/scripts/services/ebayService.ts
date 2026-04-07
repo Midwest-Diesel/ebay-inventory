@@ -79,12 +79,20 @@ export const getInventoryItems = async (limit: number, offset: number): Promise<
 
 // === POST routes === //
 
-export const createOrReplaceInventoryItem = async (item: CatalogItem) => {
+export const createOrReplaceInventoryItem = async (item: CatalogItem): Promise<boolean> => {
   try {
     await axios.post(`${SERVER_URL}/api/ebay/catalog-item`, { item, isProd }, { withCredentials: true });
-  } catch (error) {
+    return false;
+  } catch (error: any) {
     console.error(error);
-    alert(`Error in [createOrReplaceInventoryItem] ${error}`);
+    const message = (
+      error?.response?.data?.errors?.[0]?.message ||
+      error?.response?.data?.message ||
+      error.message ||
+      'Unknown error'
+    );
+    alert(`Error in [createOrReplaceInventoryItem] ${message}`);
+    return true;
   }
 };
 

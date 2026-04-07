@@ -12,16 +12,19 @@ interface Props {
   setOpen: (open: boolean) => void
   pictures: Picture[]
   stockNum: string
+  items: AddOnItem[]
+  onSave: (pictures: string[], stockNum: string) => void
 }
 
 
-export default function PicturesDialog({ open, setOpen, pictures, stockNum }: Props) {
+export default function PicturesDialog({ open, setOpen, pictures, stockNum, items, onSave }: Props) {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const DIRECTORY = `\\\\MWD1-SERVER\\Server\\Pictures\\sn_specific\\${stockNum}`;
 
   useEffect(() => {
     if (!open) return;
-    setSelectedImages([]);
+    const item = items.find((i) => i.stockNum === stockNum);
+    setSelectedImages(item?.localImages ?? []);
   }, [open, stockNum]);
 
   const editSelectedImages = (checked: boolean, name: string) => {
@@ -35,6 +38,11 @@ export default function PicturesDialog({ open, setOpen, pictures, stockNum }: Pr
   const openFolder = async () => {
     await invoke('view_file', { filepath: DIRECTORY });
   };
+
+  const onClickSave = () => {
+    onSave(selectedImages, stockNum);
+    setOpen(false);
+  };
   
 
   return (
@@ -44,29 +52,37 @@ export default function PicturesDialog({ open, setOpen, pictures, stockNum }: Pr
       title="Pictures"
       width={650}
       height={520}
-      className="part-pictures-dialog"
+      y={-250}
+      x={-250}
+      className="pictures-dialog"
     >
-      <Button onClick={openFolder}>Open Folder</Button>
+      <div className="pictures-dialog__buttons">
+        <Button onClick={openFolder}>Open Folder</Button>
+        <Button onClick={onClickSave}>Save</Button>
+      </div>
 
       { pictures.length === 0 && <Loading /> }
-      {pictures.map((pic: Picture, i) => {
-        return (
-          <div key={i} className="part-pictures-dialog__img-container">
-            <img
-              src={`data:image/png;base64,${pic.url}`}
-              alt={pic.name}
-              width={240}
-              height={240}
-            />
 
-            <Checkbox
-              variant={['label-fit', 'dark-bg']}
-              checked={selectedImages.includes(pic.name)}
-              onChange={(e: any) => editSelectedImages(e.target.checked, pic.name)}
-            />
-          </div>
-        );
-      })}
+      <div className="dialog__content">
+        {pictures.map((pic: Picture, i) => {
+          return (
+            <div key={i} className="pictures-dialog__img-container">
+              <img
+                src={`data:image/png;base64,${pic.url}`}
+                alt={pic.name}
+                width={240}
+                height={240}
+              />
+
+              <Checkbox
+                variant={['label-fit', 'dark-bg']}
+                checked={selectedImages.includes(pic.name)}
+                onChange={(e) => editSelectedImages(e.target.checked, pic.name)}
+              />
+            </div>
+          );
+        })}
+      </div>
     </Dialog>
   );
 }
