@@ -29,7 +29,7 @@ export default function PicturesDialog({ open, setOpen, pictures, stockNum, item
   }, [open, stockNum]);
 
   const editSelectedImages = (checked: boolean, name: string) => {
-    if (checked) { 
+    if (checked) {
       setSelectedImages([...selectedImages, name]);
     } else {
       setSelectedImages(selectedImages.filter((pic) => pic !== name));

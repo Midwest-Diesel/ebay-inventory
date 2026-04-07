@@ -27,7 +27,7 @@ export function Layout({ children, title }: Props) {
 
   return (
     <div style={{ height: '100%' }}>
-      { user && <Navbar /> }
+      { (user && location.pathname !== '/') && <Navbar /> }
       <div className="layout__container">
         <div className="layout__main-content">
           { children }

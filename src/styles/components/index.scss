@@ -54,3 +54,19 @@ main {
     width: 1rem;
   }
 }
+
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  background-color: var(--grey-light-1);
+
+  a {
+    color: white;
+    padding: 1rem;
+
+    &:hover {
+      color: var(--blue-light-3);
+    }
+  }
+}
