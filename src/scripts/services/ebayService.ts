@@ -107,6 +107,15 @@ export const editItemListingStatus = async (id: number, listingStatus: ListingSt
   }
 };
 
+export const editItemImageUrls = async (id: number, imageUrls: string[]) => {
+  try {
+    await api.patch(`/api/ebay/image-urls`, { id, imageUrls });
+  } catch (error) {
+    console.error(error);
+    alert(`Error in [editItemImageUrls] ${error}`);
+  }
+};
+
 
 // === PUT routes === //
 

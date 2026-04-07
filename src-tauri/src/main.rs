@@ -1,5 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::fs;
 use std::{fs::remove_file, process::Command, env};
 use std::{fs::File, io::copy};
 use std::io::{self, Write};
@@ -40,6 +41,7 @@ fn main() {
     .invoke_handler(tauri::generate_handler![
       install_update,
       view_file,
+      get_file,
       get_stock_num_images,
       get_env_var
     ])
@@ -138,6 +140,12 @@ fn view_file(app_handle: AppHandle, filepath: String) -> Result<(), String> {
     .opener()
     .open_path(filepath, None::<&str>)
     .map_err(|e| format!("Failed to open: {}", e))
+}
+
+#[tauri::command]
+fn get_file(filepath: String) -> Result<Vec<u8>, String> {
+  fs::read(filepath)
+    .map_err(|e| format!("Failed to read file: {}", e))
 }
 
 #[tauri::command]

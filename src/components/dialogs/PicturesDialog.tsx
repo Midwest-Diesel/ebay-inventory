@@ -14,10 +14,11 @@ interface Props {
   stockNum: string
   items: AddOnItem[]
   onSave: (pictures: string[], stockNum: string) => void
+  isFetching: boolean
 }
 
 
-export default function PicturesDialog({ open, setOpen, pictures, stockNum, items, onSave }: Props) {
+export default function PicturesDialog({ open, setOpen, pictures, stockNum, items, onSave, isFetching }: Props) {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const DIRECTORY = `\\\\MWD1-SERVER\\Server\\Pictures\\sn_specific\\${stockNum}`;
 
@@ -61,10 +62,11 @@ export default function PicturesDialog({ open, setOpen, pictures, stockNum, item
         <Button onClick={onClickSave}>Save</Button>
       </div>
 
-      { pictures.length === 0 && <Loading /> }
+      { (pictures.length === 0 && !isFetching) && <Loading /> }
 
       <div className="dialog__content">
         {pictures.map((pic: Picture, i) => {
+          const file = `${DIRECTORY}\\${pic.name}`;
           return (
             <div key={i} className="pictures-dialog__img-container">
               <img
@@ -76,8 +78,8 @@ export default function PicturesDialog({ open, setOpen, pictures, stockNum, item
 
               <Checkbox
                 variant={['label-fit', 'dark-bg']}
-                checked={selectedImages.includes(pic.name)}
-                onChange={(e) => editSelectedImages(e.target.checked, pic.name)}
+                checked={selectedImages.includes(file)}
+                onChange={(e) => editSelectedImages(e.target.checked, `${DIRECTORY}\\${pic.name}`)}
               />
             </div>
           );

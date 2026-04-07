@@ -1,8 +1,8 @@
 import PicturesDialog from "@/components/dialogs/PicturesDialog";
 import { Layout } from "@/components/Layout";
 import useAutoSave from "@/hooks/useAutoSave";
-import { createOrReplaceInventoryItem, editBulkAddonItems, editItemListingStatus, getAddonItems, getInventoryItems } from "@/scripts/services/ebayService";
-import { getImagesFromStockNum } from "@/scripts/services/imagesService";
+import { createOrReplaceInventoryItem, editBulkAddonItems, editItemImageUrls, editItemListingStatus, getAddonItems, getInventoryItems } from "@/scripts/services/ebayService";
+import { getFileFromPath, getImagesFromStockNum, uploadImageToBucket } from "@/scripts/services/imagesService";
 import { Button, Input, Select, Table, TextArea } from "@midwest-diesel/mwd-ui";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -23,7 +23,7 @@ export default function Catalog() {
     queryFn: () => getInventoryItems(20, 0)
   });
 
-  const { data: pictures = [] } = useQuery<Picture[]>({
+  const { data: pictures = [], isFetching } = useQuery<Picture[]>({
     queryKey: ['pictures', stockNumForPics],
     queryFn: () => getImagesFromStockNum(stockNumForPics),
     enabled: Boolean(stockNumForPics)
@@ -43,7 +43,13 @@ export default function Catalog() {
   };
 
   const onClickAddItem = async (item: AddOnItem) => {
-    // TODO: Upload local images
+    const imageUrls: string[] = [];
+    for (const img of item.localImages) {
+      const file = await getFileFromPath(img);
+      if (!file) continue;
+      const res = await uploadImageToBucket(file);
+      if (res) imageUrls.push(res.url);
+    }
 
     const catalogItem: CatalogItem = {
       sku: item.stockNum,
@@ -69,13 +75,14 @@ export default function Catalog() {
       product: {
         title: item.title,
         description: item.desc,
-        imageUrls: item.imageUrls
+        imageUrls
       }
     };
     const error = await createOrReplaceInventoryItem(catalogItem);
     if (error) return;
 
     await editItemListingStatus(item.id, 'COMPLETE');
+    await editItemImageUrls(item.id, imageUrls);
     setItems(items.filter((i) => i.id !== item.id));
   };
 
@@ -106,6 +113,7 @@ export default function Catalog() {
           stockNum={stockNumForPics}
           items={items}
           onSave={onSelectPictures}
+          isFetching={isFetching}
         />
       }
 
@@ -177,6 +185,7 @@ export default function Catalog() {
                   </Select>
                 </td>
                 <td>
+                  <p style={{ fontSize: 'var(--font-xsm)', textAlign: 'center' }}>{ item.localImages.length } Selected</p>
                   <Button variant={['no-style']} className="image-btn" onClick={() => onClickOpenPictures(item.stockNum)}>
                     <img src="/images/image.svg" alt="" />
                   </Button>
