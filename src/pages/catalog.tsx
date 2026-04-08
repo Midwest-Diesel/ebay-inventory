@@ -116,8 +116,6 @@ export default function Catalog() {
           isFetching={isFetching}
         />
       }
-
-      <a href="/" className="back-link">Back</a>
       <h1>Pending Items</h1>
 
       <Table className="catalog-table">
