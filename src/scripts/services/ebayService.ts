@@ -1,6 +1,5 @@
 import axios from "axios";
 import api from "../config/axios";
-import { invoke } from "../config/tauri";
 import { open } from '@tauri-apps/plugin-shell';
 
 
@@ -9,9 +8,8 @@ const SERVER_URL = 'https://inventory-server.up.railway.app';
 
 // === GET routes === //
 
-async function getEbayAuthCode(clientId: string, ruName: string, scopes: string): Promise<string> {
-  const consentUrl = isProd ? 'https://auth.ebay.com/oauth2/authorize' : 'https://auth.sandbox.ebay.com/oauth2/authorize';
-  open(`${consentUrl}?client_id=${clientId}&redirect_uri=${ruName}&response_type=code&scope=${scopes}`);
+async function getEbayAuthCode(consentUrl: string): Promise<string> {
+  open(consentUrl);
 
   return new Promise<string>((resolve, reject) => {
     const maxRequests = 60;
@@ -35,10 +33,9 @@ async function getEbayAuthCode(clientId: string, ruName: string, scopes: string)
 
 export const setAccessToken = async () => {
   try {
-    const clientId = await invoke('get_env_var', { varName: 'EBAY_CLIENT_ID' });
-    const ruName = await invoke('get_env_var', { varName: 'EBAY_REDIRECT_URL' });
-    const scopes = encodeURIComponent(await invoke('get_env_var', { varName: 'EBAY_SCOPES' }));
-    const code = await getEbayAuthCode(clientId, ruName, scopes);
+    const res = await axios.post(`${SERVER_URL}/api/ebay/consent-url`, { isProd }, { withCredentials: true });
+    const code = await getEbayAuthCode(res.data.url);
+
     const url = isProd ? 'https://api.ebay.com/identity/v1/oauth2/token' : 'https://api.sandbox.ebay.com/identity/v1/oauth2/token';
     await axios.post(`${SERVER_URL}/api/ebay/token`, { code, url, isProd }, { withCredentials: true });
   } catch (error) {
