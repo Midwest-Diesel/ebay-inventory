@@ -1,10 +1,37 @@
-import axios from "axios";
-import api from "../config/axios";
+import api from '../config/axios';
 import { open } from '@tauri-apps/plugin-shell';
 
 
 const isProd = import.meta.env.PROD;
-const SERVER_URL = 'https://inventory-server.up.railway.app';
+const catalogItems = [
+  {
+    sku: 'BR326-17D',
+    availability: {
+      shipToLocationAvailability: {
+        quantity: 1
+      }
+    },
+    condition: 'NEW_OTHER',
+    packageWeightAndSize: {
+      dimensions: {
+        length: 1,
+        width: 1,
+        height: 1,
+        unit: 'FEET'
+      },
+      weight: {
+        value: 10,
+        unit: 'POUND'
+      },
+      packageType: 'VERY_LARGE_PACK'
+    },
+    product: {
+      title: 'NTO BRACKET',
+      description: 'NTO BRACKET',
+      imageUrls: ['\\\\MWD1-SERVER\\Server\\Pictures\\sn_specific\\BR326-17D\\BR3216-1.jpg']
+    }
+  }
+] as CatalogItem[];
 
 // === GET routes === //
 
@@ -21,7 +48,7 @@ async function getEbayAuthCode(consentUrl: string): Promise<string> {
           reject('Max requests');
         }
         
-        const res = await axios.get(`${SERVER_URL}/api/ebay/code`, { withCredentials: true });
+        const res = await api.get(`/api/ebay/code`);
         if (res.data.code) {
           clearInterval(interval);
           resolve(res.data.code);
@@ -35,20 +62,13 @@ async function getEbayAuthCode(consentUrl: string): Promise<string> {
   });
 }
 
-export const checkAccessToken = async (accessToken: string | null): Promise<boolean> => {
-  if (!accessToken) return false;
-  const res = await getInventoryItems(1, 0);
-  if (res) return true;
-  return false;
-};
-
 export const setAccessToken = async () => {
   try {
-    const res = await axios.post(`${SERVER_URL}/api/ebay/consent-url`, { isProd }, { withCredentials: true });
+    const res = await api.post(`/api/ebay/consent-url`, { isProd });
     const code = await getEbayAuthCode(res.data.url);
 
     const url = isProd ? 'https://api.ebay.com/identity/v1/oauth2/token' : 'https://api.sandbox.ebay.com/identity/v1/oauth2/token';
-    await axios.post(`${SERVER_URL}/api/ebay/token`, { code, url, isProd }, { withCredentials: true });
+    await api.post(`/api/ebay/token`, { code, url, isProd });
   } catch (error) {
     console.error(error);
   }
@@ -56,7 +76,7 @@ export const setAccessToken = async () => {
 
 export const getAccessToken = async (): Promise<string | null> => {
   try {
-    const res = await axios.get(`${SERVER_URL}/api/ebay/session`, { withCredentials: true });
+    const res = await api.get(`/api/ebay/session`);
     return res.data.accessToken;
   } catch (error) {
     console.log(error);
@@ -75,9 +95,11 @@ export const getAddonItems = async (listingStatus: ListingStatus): Promise<AddOn
 };
 
 export const getInventoryItems = async (limit: number, offset: number): Promise<CatalogItem[]> => {
+  if (!isProd) return catalogItems;
+
   try {
     const params = { limit, offset, isProd };
-    const res = await axios.get(`${SERVER_URL}/api/ebay/catalog-items`, { withCredentials: true, params });
+    const res = await api.get(`/api/ebay/catalog-items`, { params });
     return res.data;
   } catch (error) {
     console.error(error);
@@ -86,9 +108,11 @@ export const getInventoryItems = async (limit: number, offset: number): Promise<
 };
 
 export const getOffer = async (sku: string): Promise<Offer | null> => {
+  if (!isProd) return null;
+
   try {
     const params = { sku };
-    const res = await axios.get(`${SERVER_URL}/api/ebay/offer`, { withCredentials: true, params });
+    const res = await api.get(`/api/ebay/offer`, { params });
     return res.data;
   } catch (error) {
     console.error(error);
@@ -99,8 +123,10 @@ export const getOffer = async (sku: string): Promise<Offer | null> => {
 // === POST routes === //
 
 export const createOrReplaceInventoryItem = async (item: CatalogItem): Promise<boolean> => {
+  if (!isProd) return false;
+
   try {
-    await axios.post(`${SERVER_URL}/api/ebay/catalog-item`, { item, isProd }, { withCredentials: true });
+    await api.post(`/api/ebay/catalog-item`, { item, isProd });
     return false;
   } catch (error: any) {
     console.error(error);
@@ -116,16 +142,20 @@ export const createOrReplaceInventoryItem = async (item: CatalogItem): Promise<b
 };
 
 export const createOffer = async (offer: Offer) => {
+  if (!isProd) return;
+
   try {
-    await axios.post(`${SERVER_URL}/api/ebay/create-offer`, offer, { withCredentials: true });
+    await api.post(`/api/ebay/create-offer`, offer);
   } catch (error) {
     console.error(error);
   }
 };
 
 export const publishOffer = async (offerId: number) => {
+  if (!isProd) return;
+
   try {
-    await axios.post(`${SERVER_URL}/api/ebay/publish-offer`, { offerId }, { withCredentials: true });
+    await api.post(`/api/ebay/publish-offer`, { offerId });
   } catch (error) {
     console.error(error);
   }
@@ -134,8 +164,10 @@ export const publishOffer = async (offerId: number) => {
 // === PUT routes === //
 
 export const updateOffer = async (offer: Offer) => {
+  if (!isProd) return;
+
   try {
-    await axios.put(`${SERVER_URL}/api/ebay/update-offer`, offer, { withCredentials: true });
+    await api.put(`/api/ebay/update-offer`, offer);
   } catch (error) {
     console.error(error);
   }

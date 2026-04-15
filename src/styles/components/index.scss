@@ -64,6 +64,11 @@ nav {
   a {
     color: white;
     padding: 1rem;
+    align-self: center;
+
+    img {
+      width: 1.8rem;
+    }
 
     &:hover {
       color: var(--blue-light-3);
