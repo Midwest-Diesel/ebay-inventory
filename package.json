@@ -31,7 +31,7 @@
     "@tauri-apps/plugin-opener": "^2.3.1",
     "@tauri-apps/plugin-shell": "^2.3.5",
     "@tauri-apps/plugin-updater": "^2.8.1",
-    "axios": "^1.13.6",
+    "axios": "^1.15.0",
     "axios-cookiejar-support": "^6.0.5",
     "html-react-parser": "^5.2.17",
     "jotai": "^2.18.1",
