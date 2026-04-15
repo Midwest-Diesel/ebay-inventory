@@ -25,7 +25,9 @@ type Manufacturer = 'Caterpillar' | null;
 type Condition = 'NEW_OTHER' | 'USED_GOOD' | 'FOR_PARTS_OR_NOT_WORKING' | 'GOOD_REFURBISHED';
 type LengthUnit = 'INCH' | 'FEET' | 'CENTIMETER' | 'METER';
 type WeightUnit = 'POUND' | 'KILOGRAM' | 'OUNCE' | 'GRAM';
-type PackageType = 'MAILING_BOX'; // https://developer.ebay.com/api-docs/sell/inventory/types/slr:PackageTypeEnum
+type PackageType = 'VERY_LARGE_PACK'; // https://developer.ebay.com/api-docs/sell/inventory/types/slr:PackageTypeEnum
+type Marketplace = 'EBAY_MOTORS';
+type OfferFormat = 'FIXED_PRICE' | 'AUCTION';
 
 type AddOnItem = {
   id: number
@@ -38,6 +40,7 @@ type AddOnItem = {
   listingStatus: ListingStatus
   addonQty: number
   qty: number
+  unitPrice: number
   localImages: string[]
   imageUrls: string[]
   createdAt: Date
@@ -71,3 +74,20 @@ type CatalogItem = {
     imageUrls: string[]
   }
 };
+
+type Offer = {
+  sku: string
+  categoryId: number
+  marketplaceId: Marketplace
+  merchantLocationKey: string
+  format: OfferFormat
+  listingDescription: string
+  availableQuantity: number
+  quantityLimitPerBuyer: number
+  pricingSummary: {
+    price: {
+      value: number
+      currency: 'USD'
+    }
+  }
+}

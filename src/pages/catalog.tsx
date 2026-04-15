@@ -1,12 +1,15 @@
 import PicturesDialog from "@/components/dialogs/PicturesDialog";
 import { Layout } from "@/components/Layout";
 import useAutoSave from "@/hooks/useAutoSave";
-import { createOrReplaceInventoryItem, editBulkAddonItems, editItemImageUrls, editItemListingStatus, getAddonItems, getInventoryItems } from "@/scripts/services/ebayService";
+import { createOffer, createOrReplaceInventoryItem, editBulkAddonItems, editItemImageUrls, editItemListingStatus, getAddonItems } from "@/scripts/services/ebayService";
 import { getFileFromPath, getImagesFromStockNum, uploadImageToBucket } from "@/scripts/services/imagesService";
 import { Button, Input, Select, Table, TextArea } from "@midwest-diesel/mwd-ui";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
+
+const PRIMARY_CATEGORY_ID = 259088;
+const BUY_LIMIT = 1;
 
 export default function Catalog() {
   const [items, setItems] = useState<AddOnItem[]>([]);
@@ -16,11 +19,6 @@ export default function Catalog() {
   const { data: itemsData } = useQuery<AddOnItem[]>({
     queryKey: ['items'],
     queryFn: () => getAddonItems('PENDING')
-  });
-
-  const { data: catalogItems } = useQuery({
-    queryKey: ['catalogItems'],
-    queryFn: () => getInventoryItems(20, 0)
   });
 
   const { data: pictures = [], isFetching } = useQuery<Picture[]>({
@@ -70,7 +68,7 @@ export default function Catalog() {
           value: 10,
           unit: 'POUND'
         },
-        packageType: 'MAILING_BOX'
+        packageType: 'VERY_LARGE_PACK'
       },
       product: {
         title: item.title,
@@ -84,6 +82,25 @@ export default function Catalog() {
     await editItemListingStatus(item.id, 'COMPLETE');
     await editItemImageUrls(item.id, imageUrls);
     setItems(items.filter((i) => i.id !== item.id));
+
+
+    const offer: Offer = {
+      sku: item.stockNum,
+      format: 'FIXED_PRICE',
+      categoryId: PRIMARY_CATEGORY_ID,
+      marketplaceId: 'EBAY_MOTORS',
+      merchantLocationKey: 'warehouse',
+      listingDescription: item.desc,
+      availableQuantity: item.qty,
+      quantityLimitPerBuyer: BUY_LIMIT,
+      pricingSummary: {
+        price: {
+          value: item.unitPrice,
+          currency: 'USD'
+        }
+      }
+    };
+    await createOffer(offer);
   };
 
   const onClickOpenPictures = (stockNum: string) => {
