@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 
 
 const PRIMARY_CATEGORY_ID = 259088;
+const FULFILLMENT_POLICY_ID = 287416755015;
 const BUY_LIMIT = 1;
 
 export default function Catalog() {
@@ -88,11 +89,14 @@ export default function Catalog() {
       sku: item.stockNum,
       format: 'FIXED_PRICE',
       categoryId: PRIMARY_CATEGORY_ID,
-      marketplaceId: 'EBAY_MOTORS',
+      marketplaceId: 'EBAY_US',
       merchantLocationKey: 'warehouse',
       listingDescription: item.desc,
       availableQuantity: item.qty,
       quantityLimitPerBuyer: BUY_LIMIT,
+      listingPolicies: {
+        fulfillmentPolicyId: FULFILLMENT_POLICY_ID
+      },
       pricingSummary: {
         price: {
           value: item.unitPrice,

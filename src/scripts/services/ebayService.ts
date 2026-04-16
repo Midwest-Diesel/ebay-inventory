@@ -28,7 +28,7 @@ const catalogItems = [
     product: {
       title: 'NTO BRACKET',
       description: 'NTO BRACKET',
-      imageUrls: ['\\\\MWD1-SERVER\\Server\\Pictures\\sn_specific\\BR326-17D\\BR3216-1.jpg']
+      imageUrls: ['\\\\MWD1-SERVER\\Server\\Pictures\\sn_specific\\BR326-17D\\BR3216-1.jpg'],
     }
   }
 ] as CatalogItem[];

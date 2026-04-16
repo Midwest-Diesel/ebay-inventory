@@ -26,8 +26,9 @@ type Condition = 'NEW_OTHER' | 'USED_GOOD' | 'FOR_PARTS_OR_NOT_WORKING' | 'GOOD_
 type LengthUnit = 'INCH' | 'FEET' | 'CENTIMETER' | 'METER';
 type WeightUnit = 'POUND' | 'KILOGRAM' | 'OUNCE' | 'GRAM';
 type PackageType = 'VERY_LARGE_PACK'; // https://developer.ebay.com/api-docs/sell/inventory/types/slr:PackageTypeEnum
-type Marketplace = 'EBAY_MOTORS';
+type Marketplace = 'EBAY_US';
 type OfferFormat = 'FIXED_PRICE' | 'AUCTION';
+type ShippingServiceType = 'DOMESTIC' | 'INTERNATIONAL';
 
 type AddOnItem = {
   id: number
@@ -84,6 +85,9 @@ type Offer = {
   listingDescription: string
   availableQuantity: number
   quantityLimitPerBuyer: number
+  listingPolicies: {
+    fulfillmentPolicyId: number
+  }
   pricingSummary: {
     price: {
       value: number

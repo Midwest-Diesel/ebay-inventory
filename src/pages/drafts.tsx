@@ -16,20 +16,20 @@ export default function Drafts() {
 
   return (
     <Layout>
-      <Button>{ status === 'pending' ? 'Published' : 'Pending' } Drafts</Button>
+      <Button variant={['fit']}>{ status === 'pending' ? 'Published' : 'Pending' } Drafts</Button>
 
       {status === 'pending' &&
         <Table className="catalog-table">
           <thead>
             <tr>
-              <th></th>
+              <th>SKU</th>
             </tr>
           </thead>
           <tbody>
             {catalogItems.map((item) => {
               return (
                 <tr key={item.sku}>
-
+                  <td>{ item.sku }</td>
                 </tr>
               );
             })}
