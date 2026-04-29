@@ -85,18 +85,14 @@ export default function Catalog() {
     setItems(items.filter((i) => i.id !== item.id));
 
 
-    const offer: Offer = {
+    const unpublishedOffer: UnfinishedOffer = {
       sku: item.stockNum,
       format: 'FIXED_PRICE',
       categoryId: PRIMARY_CATEGORY_ID,
       marketplaceId: 'EBAY_US',
-      merchantLocationKey: 'warehouse',
       listingDescription: item.desc,
       availableQuantity: item.qty,
       quantityLimitPerBuyer: BUY_LIMIT,
-      listingPolicies: {
-        fulfillmentPolicyId: FULFILLMENT_POLICY_ID
-      },
       pricingSummary: {
         price: {
           value: item.unitPrice,
@@ -104,7 +100,17 @@ export default function Catalog() {
         }
       }
     };
-    await createOffer(offer);
+    await createOffer(unpublishedOffer);
+
+    const offer: Offer = {
+      ...unpublishedOffer,
+      listingPolicies: {
+        fulfillmentPolicyId: FULFILLMENT_POLICY_ID,
+        paymentPolicyId: FULFILLMENT_POLICY_ID
+      },
+      includeCatalogProductDetails : true,
+      merchantLocationKey: 'warehouse'
+    };
   };
 
   const onClickOpenPictures = (stockNum: string) => {

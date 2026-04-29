@@ -33,6 +33,30 @@ const catalogItems = [
   }
 ] as CatalogItem[];
 
+const offers = [
+  {
+    sku: 'BR326-17D',
+    categoryId: 259088,
+    marketplaceId: 'EBAY_US',
+    merchantLocationKey: 'warehouse',
+    format: 'FIXED_PRICE',
+    listingDescription: '(10.0) NEW SURPLUS, PLUG CONNECTION',
+    availableQuantity: 20,
+    quantityLimitPerBuyer: 1,
+    listingPolicies: {
+      fulfillmentPolicyId: 287416755015,
+      paymentPolicyId: 287416755015
+    },
+    includeCatalogProductDetails: true,
+    pricingSummary: {
+      price: {
+        value: 0,
+        currency: 'USD'
+      }
+    }
+  }
+] as Offer[];
+
 // === GET routes === //
 
 async function getEbayAuthCode(consentUrl: string): Promise<string> {
@@ -108,7 +132,7 @@ export const getInventoryItems = async (limit: number, offset: number): Promise<
 };
 
 export const getOffer = async (sku: string): Promise<Offer | null> => {
-  if (!isProd) return null;
+  if (!isProd) return offers.find((o) => sku === o.sku) ?? null;
 
   try {
     const params = { sku };
@@ -141,7 +165,7 @@ export const createOrReplaceInventoryItem = async (item: CatalogItem): Promise<b
   }
 };
 
-export const createOffer = async (offer: Offer) => {
+export const createOffer = async (offer: UnfinishedOffer) => {
   if (!isProd) return;
 
   try {

@@ -76,6 +76,22 @@ type CatalogItem = {
   }
 };
 
+type UnfinishedOffer = {
+  sku: string
+  categoryId: number
+  marketplaceId: Marketplace
+  format: OfferFormat
+  listingDescription: string
+  availableQuantity: number
+  quantityLimitPerBuyer: number
+  pricingSummary: {
+    price: {
+      value: number
+      currency: 'USD'
+    }
+  }
+};
+
 type Offer = {
   sku: string
   categoryId: number
@@ -87,7 +103,9 @@ type Offer = {
   quantityLimitPerBuyer: number
   listingPolicies: {
     fulfillmentPolicyId: number
-  }
+    paymentPolicyId: number
+  },
+  includeCatalogProductDetails: boolean
   pricingSummary: {
     price: {
       value: number

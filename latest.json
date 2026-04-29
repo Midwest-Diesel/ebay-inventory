@@ -1,11 +1,11 @@
 {
-  "version": "v0.4.2",
-  "pub_date": "2026-04-16T15:08:20Z",
+  "version": "v0.4.3",
+  "pub_date": "2026-04-29T21:23:29Z",
   "notes": "",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSYXQxaWtWaFNYeDlESHFmVGc3Z25LZmtBbk1GamdRQ1hXZWs2Mnk1Mk1wcEd4WGhhVm1aazFaSnQvUEYwLzhYV3BpS0phYzFjQVZJcWJmOFA3SlBRZExENkxPMWEyQ2dRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc2MzUyMDk4CWZpbGU6ZUJheS1JbnZlbnRvcnlfMC40LjJfeDY0LXNldHVwLmV4ZQpvRTVlNGZpZUxVK2VmQ0xKa2lCNVVlQUdxeUwycHNUTlh5MDVZeUIzN0xRdFAxT3JUcUJ1azRmSHZMRTR5U0UwZVR2bVY4ZTZscTdoN3BGYkg1WjJCdz09Cg==",
-      "url": "https://github.com/Midwest-Diesel/ebay-inventory/releases/download/v0.4.2/eBay-Inventory_0.4.2_x64-setup.nsis.zip"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSYXQxaWtWaFNYeHp2ejd5RTBnWFR2YkdlZXYydTVhZDBKam5JelQ3emVRR0lBTENnSDJyVXZMVHhTaG9RZ0YyREFCampFNlp0UDRKa3Eya2hKc0c2NUVsQ2xKbW9hNEFjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc3NDk3ODA4CWZpbGU6ZUJheS1JbnZlbnRvcnlfMC40LjNfeDY0LXNldHVwLmV4ZQpYYkNnNkZ2MXQ3NllDV25Fblc3M0l3WXJjbWVYVTUrSXZyWDFSamIzKzlKUzdsNVJ6bXVMZWJ5STlESVVOOWZvKzlUUWlWOWJIWXN3T2hQTUJZNmFEQT09Cg==",
+      "url": "https://github.com/Midwest-Diesel/ebay-inventory/releases/download/v0.4.3/eBay-Inventory_0.4.3_x64-setup.nsis.zip"
     }
   }
 }
