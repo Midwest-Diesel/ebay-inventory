@@ -34,6 +34,11 @@ export default function System() {
     }
   };
 
+  const onClickResetToken = () => {
+    localStorage.removeItem('ebay');
+    location.reload();
+  };
+
   
   return (
     <Layout title="System">
@@ -43,6 +48,8 @@ export default function System() {
         { !status && <Button variant={['fit']} onClick={checkForUpdates}>Check For Updates</Button> }
         { status && <p className="system-page__status-text">{ status }</p> }
         
+        <br />
+        <Button variant={['fit']} onClick={onClickResetToken}>Reset eBay Token</Button>
         <Button variant={['fit']} onClick={logout}>Logout</Button>
       </div>
     </Layout>

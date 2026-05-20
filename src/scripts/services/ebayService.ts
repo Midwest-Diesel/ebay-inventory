@@ -2,63 +2,6 @@ import api from '../config/axios';
 import { open } from '@tauri-apps/plugin-shell';
 
 
-const isProd = import.meta.env.PROD;
-const catalogItems = [
-  {
-    sku: 'BR326-17D',
-    availability: {
-      shipToLocationAvailability: {
-        quantity: 1
-      }
-    },
-    condition: 'NEW_OTHER',
-    packageWeightAndSize: {
-      dimensions: {
-        length: 1,
-        width: 1,
-        height: 1,
-        unit: 'FEET'
-      },
-      weight: {
-        value: 10,
-        unit: 'POUND'
-      },
-      packageType: 'VERY_LARGE_PACK'
-    },
-    product: {
-      title: 'NTO BRACKET',
-      description: 'NTO BRACKET',
-      imageUrls: ['\\\\MWD1-SERVER\\Server\\Pictures\\sn_specific\\BR326-17D\\BR3216-1.jpg'],
-    }
-  }
-] as CatalogItem[];
-
-const offers = [
-  {
-    sku: 'BR326-17D',
-    categoryId: 259088,
-    marketplaceId: 'EBAY_US',
-    merchantLocationKey: 'warehouse',
-    format: 'FIXED_PRICE',
-    listingDescription: '(10.0) NEW SURPLUS, PLUG CONNECTION',
-    availableQuantity: 20,
-    quantityLimitPerBuyer: 1,
-    listingPolicies: {
-      fulfillmentPolicyId: 287416755015,
-      paymentPolicyId: 287416755015
-    },
-    includeCatalogProductDetails: true,
-    pricingSummary: {
-      price: {
-        value: 0,
-        currency: 'USD'
-      }
-    }
-  }
-] as Offer[];
-
-// === GET routes === //
-
 async function getEbayAuthCode(consentUrl: string): Promise<string> {
   open(consentUrl);
 
@@ -72,7 +15,7 @@ async function getEbayAuthCode(consentUrl: string): Promise<string> {
           reject('Max requests');
         }
         
-        const res = await api.get(`/api/ebay/code`);
+        const res = await api.get(`https://inventory-server.up.railway.app/api/ebay/code`);
         if (res.data.code) {
           clearInterval(interval);
           resolve(res.data.code);
@@ -86,21 +29,19 @@ async function getEbayAuthCode(consentUrl: string): Promise<string> {
   });
 }
 
-export const setAccessToken = async () => {
-  try {
-    const res = await api.post(`/api/ebay/consent-url`, { isProd });
-    const code = await getEbayAuthCode(res.data.url);
-
-    const url = isProd ? 'https://api.ebay.com/identity/v1/oauth2/token' : 'https://api.sandbox.ebay.com/identity/v1/oauth2/token';
-    await api.post(`/api/ebay/token`, { code, url, isProd });
-  } catch (error) {
-    console.error(error);
-  }
+const { accessToken, expiresAt, refreshToken, refreshExpiresAt } = JSON.parse(localStorage.getItem('ebay') || '{}');
+const headers = {
+  Authorization: `Bearer ${accessToken}`,
+  'X-EBAY-REFRESH-TOKEN': refreshToken,
+  'X-EBAY-EXPIRES-AT': expiresAt,
+  'X-EBAY-REFRESH-EXPIRES-AT': refreshExpiresAt
 };
+
+// === GET routes === //
 
 export const getAccessToken = async (): Promise<string | null> => {
   try {
-    const res = await api.get(`/api/ebay/session`);
+    const res = await api.get(`/api/ebay/session`, { headers });
     return res.data.accessToken;
   } catch (error) {
     console.log(error);
@@ -119,10 +60,8 @@ export const getAddonItems = async (listingStatus: ListingStatus): Promise<AddOn
 };
 
 export const getInventoryItems = async (limit: number, offset: number): Promise<CatalogItem[]> => {
-  if (!isProd) return catalogItems;
-
   try {
-    const params = { limit, offset, isProd };
+    const params = { limit, offset };
     const res = await api.get(`/api/ebay/catalog-items`, { params });
     return res.data;
   } catch (error) {
@@ -132,8 +71,6 @@ export const getInventoryItems = async (limit: number, offset: number): Promise<
 };
 
 export const getOffer = async (sku: string): Promise<Offer | null> => {
-  if (!isProd) return offers.find((o) => sku === o.sku) ?? null;
-
   try {
     const params = { sku };
     const res = await api.get(`/api/ebay/offer`, { params });
@@ -146,11 +83,21 @@ export const getOffer = async (sku: string): Promise<Offer | null> => {
 
 // === POST routes === //
 
-export const createOrReplaceInventoryItem = async (item: CatalogItem): Promise<boolean> => {
-  if (!isProd) return false;
-
+export const setAccessToken = async () => {
   try {
-    await api.post(`/api/ebay/catalog-item`, { item, isProd });
+    const res = await api.post(`/api/ebay/consent-url`);
+    const code = await getEbayAuthCode(res.data.url);
+
+    const session = await api.post(`/api/ebay/token`, { code });
+    localStorage.setItem('ebay', JSON.stringify(session.data));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const createOrReplaceInventoryItem = async (item: CatalogItem): Promise<boolean> => {
+  try {
+    await api.post(`/api/ebay/catalog-item`, { item });
     return false;
   } catch (error: any) {
     console.error(error);
@@ -166,8 +113,6 @@ export const createOrReplaceInventoryItem = async (item: CatalogItem): Promise<b
 };
 
 export const createOffer = async (offer: UnfinishedOffer) => {
-  if (!isProd) return;
-
   try {
     await api.post(`/api/ebay/create-offer`, offer);
   } catch (error) {
@@ -176,22 +121,8 @@ export const createOffer = async (offer: UnfinishedOffer) => {
 };
 
 export const publishOffer = async (offerId: number) => {
-  if (!isProd) return;
-
   try {
     await api.post(`/api/ebay/publish-offer`, { offerId });
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-// === PUT routes === //
-
-export const updateOffer = async (offer: Offer) => {
-  if (!isProd) return;
-
-  try {
-    await api.put(`/api/ebay/update-offer`, offer);
   } catch (error) {
     console.error(error);
   }
@@ -219,6 +150,14 @@ export const editItemImageUrls = async (id: number, imageUrls: string[]) => {
 
 
 // === PUT routes === //
+
+export const updateOffer = async (offer: Offer) => {
+  try {
+    await api.put(`/api/ebay/update-offer`, offer);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export const editBulkAddonItems = async (items: AddOnItem[]) => {
   try {

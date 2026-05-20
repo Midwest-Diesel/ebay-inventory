@@ -48,7 +48,7 @@ export default function GlobalData({ children }: Props) {
   }, []);
 
   useEffect(() => {
-    if (!user || import.meta.env.DEV) return;
+    if (!user) return;
     const fetchData = async () => {
       const res = await getAccessToken();
       if (!res) await setAccessToken();
