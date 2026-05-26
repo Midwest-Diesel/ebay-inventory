@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 
 
 const PRIMARY_CATEGORY_ID = 259088;
-const FULFILLMENT_POLICY_ID = 287416755015;
 const BUY_LIMIT = 1;
 
 export default function Catalog() {
@@ -101,16 +100,6 @@ export default function Catalog() {
       }
     };
     await createOffer(unpublishedOffer);
-
-    const offer: Offer = {
-      ...unpublishedOffer,
-      listingPolicies: {
-        fulfillmentPolicyId: FULFILLMENT_POLICY_ID,
-        paymentPolicyId: FULFILLMENT_POLICY_ID
-      },
-      includeCatalogProductDetails : true,
-      merchantLocationKey: 'warehouse'
-    };
   };
 
   const onClickOpenPictures = (stockNum: string) => {

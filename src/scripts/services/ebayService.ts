@@ -1,5 +1,6 @@
 import api from '../config/axios';
 import { open } from '@tauri-apps/plugin-shell';
+import { editPartOfferId } from './partsService';
 
 
 async function getEbayAuthCode(consentUrl: string): Promise<string> {
@@ -62,7 +63,7 @@ export const getAddonItems = async (listingStatus: ListingStatus): Promise<AddOn
 export const getInventoryItems = async (limit: number, offset: number): Promise<CatalogItem[]> => {
   try {
     const params = { limit, offset };
-    const res = await api.get(`/api/ebay/catalog-items`, { params });
+    const res = await api.get(`/api/ebay/catalog-items`, { params, headers });
     return res.data;
   } catch (error) {
     console.error(error);
@@ -70,10 +71,22 @@ export const getInventoryItems = async (limit: number, offset: number): Promise<
   }
 };
 
-export const getOffer = async (sku: string): Promise<Offer | null> => {
+export const getOfferBySku = async (sku: string): Promise<Offer | null> => {
   try {
     const params = { sku };
-    const res = await api.get(`/api/ebay/offer`, { params });
+    const res = await api.get(`/api/ebay/offer/sku`, { params, headers });
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const getOfferById = async (id: number): Promise<Offer | null> => {
+  try {
+    const params = { id };
+    const res = await api.get(`/api/ebay/offer/id`, { params, headers });
     return res.data;
   } catch (error) {
     console.error(error);
@@ -97,7 +110,7 @@ export const setAccessToken = async () => {
 
 export const createOrReplaceInventoryItem = async (item: CatalogItem): Promise<boolean> => {
   try {
-    await api.post(`/api/ebay/catalog-item`, { item });
+    await api.post(`/api/ebay/catalog-item`, { item }, { headers });
     return false;
   } catch (error: any) {
     console.error(error);
@@ -114,7 +127,9 @@ export const createOrReplaceInventoryItem = async (item: CatalogItem): Promise<b
 
 export const createOffer = async (offer: UnfinishedOffer) => {
   try {
-    await api.post(`/api/ebay/create-offer`, offer);
+    const res = await api.post(`/api/ebay/create-offer`, offer, { headers });
+    console.log(res.data, res.data.offerId);
+    await editPartOfferId(offer.sku, res.data.offerId);
   } catch (error) {
     console.error(error);
   }
@@ -122,7 +137,7 @@ export const createOffer = async (offer: UnfinishedOffer) => {
 
 export const publishOffer = async (offerId: number) => {
   try {
-    await api.post(`/api/ebay/publish-offer`, { offerId });
+    await api.post(`/api/ebay/publish-offer`, { offerId }, { headers });
   } catch (error) {
     console.error(error);
   }
@@ -147,7 +162,6 @@ export const editItemImageUrls = async (id: number, imageUrls: string[]) => {
     alert(`Error in [editItemImageUrls] ${error}`);
   }
 };
-
 
 // === PUT routes === //
 

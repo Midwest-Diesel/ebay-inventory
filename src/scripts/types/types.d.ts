@@ -93,6 +93,7 @@ type UnfinishedOffer = {
 };
 
 type Offer = {
+  id: number
   sku: string
   categoryId: number
   marketplaceId: Marketplace
