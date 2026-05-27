@@ -2,7 +2,7 @@ import { Layout } from "@/components/Layout";
 import { ask } from "@/scripts/config/tauri";
 import { getInventoryItems, getOfferBySku, publishOffer, updateOffer } from "@/scripts/services/ebayService";
 import { formatCurrency } from "@/scripts/tools/stringUtils";
-import { Button, Table } from "@midwest-diesel/mwd-ui";
+import { Button, Loading, Table } from "@midwest-diesel/mwd-ui";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
@@ -11,16 +11,19 @@ const FULFILLMENT_POLICY_ID = 287416755015;
 
 export default function Drafts() {
   const [offers, setOffers] = useState<Offer[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const { data: catalogItems = [] } = useQuery<CatalogItem[]>({
     queryKey: ['catalogItems'],
-    queryFn: () => getInventoryItems(9999, 0)
+    queryFn: () => getInventoryItems(100, 0)
   });
 
   useEffect(() => {
     if (catalogItems.length === 0) return;
 
     const fetchData = async () => {
+      setLoading(true);
+
       const list: Offer[] = [];
       for (let i = 0; i < catalogItems.length; i++) {
         const res = await getOfferBySku(catalogItems[i].sku);
@@ -28,6 +31,7 @@ export default function Drafts() {
       }
 
       setOffers(list);
+      setLoading(false);
     };
     fetchData();
   }, [catalogItems]);
@@ -53,30 +57,34 @@ export default function Drafts() {
     <Layout>
       <h1>Drafts</h1>
 
-      <Table className="catalog-table">
-        <thead>
-          <tr>
-            <th>SKU</th>
-            <th>Desc</th>
-            <th>Available Qty</th>
-            <th>Price</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {offers.map((offer: Offer) => {
-            return (
-              <tr key={offer.sku}>
-                <td>{ offer.sku }</td>
-                <td>{ offer.listingDescription }</td>
-                <td>{ offer.availableQuantity }</td>
-                <td>{ formatCurrency(offer.pricingSummary.price) }</td>
-                <td><Button onClick={() => onClickPublish(offer)}>Publish</Button></td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
+      {loading ?
+        <Loading />
+      :
+        <Table className="catalog-table">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Desc</th>
+              <th>Available Qty</th>
+              <th>Price</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {offers.map((offer: Offer) => {
+              return (
+                <tr key={offer.sku}>
+                  <td>{ offer.sku }</td>
+                  <td>{ offer.listingDescription }</td>
+                  <td>{ offer.availableQuantity }</td>
+                  <td>{ formatCurrency(offer.pricingSummary.price) }</td>
+                  <td><Button onClick={() => onClickPublish(offer)}>Publish</Button></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
+      }
     </Layout>
   );
 }

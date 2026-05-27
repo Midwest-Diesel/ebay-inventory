@@ -11,7 +11,7 @@ export default function Listings() {
 
   const { data: catalogItems = [] } = useQuery<CatalogItem[]>({
     queryKey: ['catalogItems'],
-    queryFn: () => getInventoryItems(9999, 0)
+    queryFn: () => getInventoryItems(100, 0)
   });
 
   useEffect(() => {

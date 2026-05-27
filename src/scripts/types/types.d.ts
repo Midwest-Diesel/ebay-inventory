@@ -21,6 +21,7 @@ type Picture = {
 };
 
 type ListingStatus = 'PENDING' | 'COMPLETE';
+type OfferStatus = 'UNPUBLISHED' | 'PUBLISHED';
 type Manufacturer = 'Caterpillar' | null;
 type Condition = 'NEW_OTHER' | 'USED_GOOD' | 'FOR_PARTS_OR_NOT_WORKING' | 'GOOD_REFURBISHED';
 type LengthUnit = 'INCH' | 'FEET' | 'CENTIMETER' | 'METER';
@@ -62,11 +63,11 @@ type CatalogItem = {
       width: number
       height: number
       unit: LengthUnit
-    },
+    }
     weight: {
       value: number
       unit: WeightUnit
-    },
+    }
     packageType: PackageType
   }
   product: {
@@ -105,7 +106,7 @@ type Offer = {
   listingPolicies: {
     fulfillmentPolicyId: number
     paymentPolicyId: number
-  },
+  }
   includeCatalogProductDetails: boolean
   pricingSummary: {
     price: {
@@ -113,4 +114,5 @@ type Offer = {
       currency: 'USD'
     }
   }
+  status: OfferStatus
 }

@@ -76,6 +76,7 @@ export default function Catalog() {
         imageUrls
       }
     };
+    
     const error = await createOrReplaceInventoryItem(catalogItem);
     if (error) return;
 
