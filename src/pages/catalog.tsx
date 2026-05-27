@@ -143,6 +143,7 @@ export default function Catalog() {
             <th>Desc</th>
             <th>Addon Qty</th>
             <th>Qty</th>
+            <th>Unit Price</th>
             <th>Condition</th>
             <th>Manufacturer</th>
             <th>Images</th>
@@ -176,6 +177,13 @@ export default function Catalog() {
                   <Input
                     value={item.qty || ''}
                     onChange={(e: any) => onChangeEditItem({ ...item, qty: e.target.value })}
+                    type="number"
+                  />
+                </td>
+                <td>
+                  <Input
+                    value={item.unitPrice || ''}
+                    onChange={(e: any) => onChangeEditItem({ ...item, unitPrice: e.target.value })}
                     type="number"
                   />
                 </td>

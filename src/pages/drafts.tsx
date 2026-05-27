@@ -1,8 +1,8 @@
 import { Layout } from "@/components/Layout";
 import { ask } from "@/scripts/config/tauri";
-import { getInventoryItems, getOfferBySku, publishOffer, updateOffer } from "@/scripts/services/ebayService";
+import { deleteOffer, editItemListingStatus, getAddonItemFromSku, getInventoryItems, getOfferBySku, publishOffer, updateOffer } from "@/scripts/services/ebayService";
 import { formatCurrency } from "@/scripts/tools/stringUtils";
-import { Button, Loading, Table } from "@midwest-diesel/mwd-ui";
+import { Button, Table } from "@midwest-diesel/mwd-ui";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
@@ -13,20 +13,26 @@ export default function Drafts() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const { data: catalogItems = [] } = useQuery<CatalogItem[]>({
+  const { data: catalogItems, refetch } = useQuery<CatalogItem[]>({
     queryKey: ['catalogItems'],
-    queryFn: () => getInventoryItems(100, 0)
+    queryFn: () => getInventoryItems(100, 0),
+    enabled: import.meta.env.PROD
   });
 
   useEffect(() => {
-    if (catalogItems.length === 0) return;
+    let injectedItems: string[] = [];
+    if (!import.meta.env.PROD) {
+      injectedItems = ['BR326-17D', 'UP21491'];
+    }
 
     const fetchData = async () => {
       setLoading(true);
 
       const list: Offer[] = [];
-      for (let i = 0; i < catalogItems.length; i++) {
-        const res = await getOfferBySku(catalogItems[i].sku);
+      const items = [...injectedItems, ...(catalogItems ?? []).map((o) => o.sku)];
+
+      for (let i = 0; i < items.length; i++) {
+        const res = await getOfferBySku(items[i]);
         if (res) list.push(res);
       }
 
@@ -37,7 +43,7 @@ export default function Drafts() {
   }, [catalogItems]);
 
   const onClickPublish = async (offer: Offer) => {
-    if (!ask(`Are you sure you want to publish ${offer.sku}?`)) return;
+    if (!await ask(`Are you sure you want to publish ${offer.sku}?`)) return;
 
     const data: Offer = {
       ...offer,
@@ -49,7 +55,19 @@ export default function Drafts() {
       merchantLocationKey: 'warehouse'
     };
     await updateOffer(data);
-    await publishOffer(data.id);
+    await publishOffer(Number(data.offerId));
+  };
+
+  const onClickDelete = async (offer: Offer) => {
+    if (!await ask(`Are you sure you want to delete ${offer.sku}?`)) return;
+    
+    await deleteOffer(Number(offer.offerId));
+    const item = await getAddonItemFromSku(offer.sku);
+    if (!item) return;
+
+    await editItemListingStatus(item.id, 'PENDING');
+    setLoading(true);
+    refetch();
   };
 
 
@@ -58,7 +76,7 @@ export default function Drafts() {
       <h1>Drafts</h1>
 
       {loading ?
-        <Loading />
+        <p>Loading...</p>
       :
         <Table className="catalog-table">
           <thead>
@@ -78,7 +96,12 @@ export default function Drafts() {
                   <td>{ offer.listingDescription }</td>
                   <td>{ offer.availableQuantity }</td>
                   <td>{ formatCurrency(offer.pricingSummary.price) }</td>
-                  <td><Button onClick={() => onClickPublish(offer)}>Publish</Button></td>
+                  <td>
+                    <div style={{ display: 'flex', gap: '0.3rem' }}>
+                      <Button onClick={() => onClickPublish(offer)}>Publish</Button>
+                      <Button variant={['danger']} onClick={() => onClickDelete(offer)}>Delete</Button>
+                    </div>
+                  </td>
                 </tr>
               );
             })}

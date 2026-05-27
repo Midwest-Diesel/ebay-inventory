@@ -60,6 +60,16 @@ export const getAddonItems = async (listingStatus: ListingStatus): Promise<AddOn
   }
 };
 
+export const getAddonItemFromSku = async (sku: string): Promise<AddOnItem | null> => {
+  try {
+    const res = await api.get(`/api/ebay/add-ons/sku/${sku}`);
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
 export const getInventoryItems = async (limit: number, offset: number): Promise<CatalogItem[]> => {
   try {
     const params = { limit, offset };
@@ -75,7 +85,6 @@ export const getOfferBySku = async (sku: string): Promise<Offer | null> => {
   try {
     const params = { sku };
     const res = await api.get(`/api/ebay/offer/sku`, { params, headers });
-    console.log(res.data);
     return res.data;
   } catch (error) {
     console.error(error);
@@ -128,18 +137,20 @@ export const createOrReplaceInventoryItem = async (item: CatalogItem): Promise<b
 export const createOffer = async (offer: UnfinishedOffer) => {
   try {
     const res = await api.post(`/api/ebay/create-offer`, offer, { headers });
-    console.log(res.data, res.data.offerId);
     await editPartOfferId(offer.sku, res.data.offerId);
   } catch (error) {
     console.error(error);
   }
 };
 
-export const publishOffer = async (offerId: number) => {
+export const publishOffer = async (offerId: number): Promise<number | null> => {
   try {
-    await api.post(`/api/ebay/publish-offer`, { offerId }, { headers });
+    const res = await api.post(`/api/ebay/publish-offer`, { offerId }, { headers });
+    if (!res) return null;
+    return Number(res.data.listingId);
   } catch (error) {
     console.error(error);
+    return null;
   }
 };
 
@@ -179,5 +190,15 @@ export const editBulkAddonItems = async (items: AddOnItem[]) => {
   } catch (error) {
     console.error(error);
     alert(`Error in [editBulkAddonItems] ${error}`);
+  }
+};
+
+// === DELETE routes === //
+
+export const deleteOffer = async (id: number) => {
+  try {
+    await api.delete(`/api/ebay/offer/${id}`, { headers });
+  } catch (error) {
+    console.error(error);
   }
 };
