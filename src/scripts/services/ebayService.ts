@@ -30,19 +30,22 @@ async function getEbayAuthCode(consentUrl: string): Promise<string> {
   });
 }
 
-const { accessToken, expiresAt, refreshToken, refreshExpiresAt } = JSON.parse(localStorage.getItem('ebay') || '{}');
-const headers = {
-  Authorization: `Bearer ${accessToken}`,
-  'X-EBAY-REFRESH-TOKEN': refreshToken,
-  'X-EBAY-EXPIRES-AT': expiresAt,
-  'X-EBAY-REFRESH-EXPIRES-AT': refreshExpiresAt
+export const getEbayHeaders = () => {
+  const { accessToken, expiresAt, refreshToken, refreshExpiresAt } = JSON.parse(localStorage.getItem('ebay') || '{}');
+  
+  return {
+    Authorization: `Bearer ${accessToken}`,
+    'X-EBAY-REFRESH-TOKEN': refreshToken,
+    'X-EBAY-EXPIRES-AT': expiresAt,
+    'X-EBAY-REFRESH-EXPIRES-AT': refreshExpiresAt
+  };
 };
 
 // === GET routes === //
 
 export const getAccessToken = async (): Promise<string | null> => {
   try {
-    const res = await api.get(`/api/ebay/session`, { headers });
+    const res = await api.get(`/api/ebay/session`, { headers: getEbayHeaders() });
     return res.data.accessToken;
   } catch (error) {
     console.log(error);
@@ -73,7 +76,7 @@ export const getAddonItemFromSku = async (sku: string): Promise<AddOnItem | null
 export const getInventoryItems = async (limit: number, offset: number): Promise<CatalogItem[]> => {
   try {
     const params = { limit, offset };
-    const res = await api.get(`/api/ebay/catalog-items`, { params, headers });
+    const res = await api.get(`/api/ebay/catalog-items`, { params, headers: getEbayHeaders() });
     return res.data;
   } catch (error) {
     console.error(error);
@@ -84,7 +87,7 @@ export const getInventoryItems = async (limit: number, offset: number): Promise<
 export const getOfferBySku = async (sku: string): Promise<Offer | null> => {
   try {
     const params = { sku };
-    const res = await api.get(`/api/ebay/offer/sku`, { params, headers });
+    const res = await api.get(`/api/ebay/offer/sku`, { params, headers: getEbayHeaders() });
     return res.data;
   } catch (error) {
     console.error(error);
@@ -95,7 +98,7 @@ export const getOfferBySku = async (sku: string): Promise<Offer | null> => {
 export const getOfferById = async (id: number): Promise<Offer | null> => {
   try {
     const params = { id };
-    const res = await api.get(`/api/ebay/offer/id`, { params, headers });
+    const res = await api.get(`/api/ebay/offer/id`, { params, headers: getEbayHeaders() });
     return res.data;
   } catch (error) {
     console.error(error);
@@ -119,7 +122,7 @@ export const setAccessToken = async () => {
 
 export const createOrReplaceInventoryItem = async (item: CatalogItem): Promise<boolean> => {
   try {
-    await api.post(`/api/ebay/catalog-item`, { item }, { headers });
+    await api.post(`/api/ebay/catalog-item`, { item }, { headers: getEbayHeaders() });
     return false;
   } catch (error: any) {
     console.error(error);
@@ -136,7 +139,7 @@ export const createOrReplaceInventoryItem = async (item: CatalogItem): Promise<b
 
 export const createOffer = async (offer: UnfinishedOffer) => {
   try {
-    const res = await api.post(`/api/ebay/create-offer`, offer, { headers });
+    const res = await api.post(`/api/ebay/create-offer`, offer, { headers: getEbayHeaders() });
     await editPartOfferId(offer.sku, res.data.offerId);
   } catch (error) {
     console.error(error);
@@ -145,7 +148,7 @@ export const createOffer = async (offer: UnfinishedOffer) => {
 
 export const publishOffer = async (offerId: number): Promise<number | null> => {
   try {
-    const res = await api.post(`/api/ebay/publish-offer`, { offerId }, { headers });
+    const res = await api.post(`/api/ebay/publish-offer`, { offerId }, { headers: getEbayHeaders() });
     if (!res) return null;
     return Number(res.data.listingId);
   } catch (error) {
@@ -197,7 +200,7 @@ export const editBulkAddonItems = async (items: AddOnItem[]) => {
 
 export const deleteOffer = async (id: number) => {
   try {
-    await api.delete(`/api/ebay/offer/${id}`, { headers });
+    await api.delete(`/api/ebay/offer/${id}`, { headers: getEbayHeaders() });
   } catch (error) {
     console.error(error);
   }
