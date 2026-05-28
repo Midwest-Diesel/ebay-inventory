@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 
-const FULFILLMENT_POLICY_ID = 287416755015;
+const FULFILLMENT_POLICY_ID = import.meta.env.PROD ? 287416755015 : 6228403000;
 
 export default function Drafts() {
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -36,15 +36,17 @@ export default function Drafts() {
         if (res) list.push(res);
       }
 
-      setOffers(list);
+      setOffers(list.filter((offer) => offer.status === 'UNPUBLISHED'));
       setLoading(false);
     };
     fetchData();
   }, [catalogItems]);
 
   const onClickPublish = async (offer: Offer) => {
+    if (offer.pricingSummary.price.value <= 0.99) return alert('Price must be greater than $0.99');
     if (!await ask(`Are you sure you want to publish ${offer.sku}?`)) return;
 
+    setLoading(true);
     const data: Offer = {
       ...offer,
       listingPolicies: {
@@ -55,13 +57,17 @@ export default function Drafts() {
       merchantLocationKey: 'warehouse'
     };
     await updateOffer(data);
-    await publishOffer(Number(data.offerId));
+    await publishOffer(data);
+    setLoading(() => false);
+
+    setLoading(() => true);
+    refetch();
   };
 
   const onClickDelete = async (offer: Offer) => {
     if (!await ask(`Are you sure you want to delete ${offer.sku}?`)) return;
     
-    await deleteOffer(Number(offer.offerId));
+    await deleteOffer(offer);
     const item = await getAddonItemFromSku(offer.sku);
     if (!item) return;
 
@@ -70,6 +76,8 @@ export default function Drafts() {
     refetch();
   };
 
+
+  if (offers.length === 0 && !loading) return <Layout><h1>Drafts</h1> <p>No content</p></Layout>;
 
   return (
     <Layout>
@@ -95,7 +103,7 @@ export default function Drafts() {
                   <td>{ offer.sku }</td>
                   <td>{ offer.listingDescription }</td>
                   <td>{ offer.availableQuantity }</td>
-                  <td>{ formatCurrency(offer.pricingSummary.price) }</td>
+                  <td>{ formatCurrency(offer.pricingSummary.price.value) }</td>
                   <td>
                     <div style={{ display: 'flex', gap: '0.3rem' }}>
                       <Button onClick={() => onClickPublish(offer)}>Publish</Button>

@@ -1,6 +1,6 @@
 import api from '../config/axios';
 import { open } from '@tauri-apps/plugin-shell';
-import { editPartOfferId } from './partsService';
+import { editPartListingId } from './partsService';
 
 
 async function getEbayAuthCode(consentUrl: string): Promise<string> {
@@ -139,21 +139,31 @@ export const createOrReplaceInventoryItem = async (item: CatalogItem): Promise<b
 
 export const createOffer = async (offer: UnfinishedOffer) => {
   try {
-    const res = await api.post(`/api/ebay/create-offer`, offer, { headers: getEbayHeaders() });
-    await editPartOfferId(offer.sku, res.data.offerId);
+    await api.post(`/api/ebay/create-offer`, offer, { headers: getEbayHeaders() });
   } catch (error) {
     console.error(error);
+    alert(`Error in [createOffer] ${error}`);
   }
 };
 
-export const publishOffer = async (offerId: number): Promise<number | null> => {
+export const publishOffer = async (offer: Offer) => {
   try {
-    const res = await api.post(`/api/ebay/publish-offer`, { offerId }, { headers: getEbayHeaders() });
-    if (!res) return null;
-    return Number(res.data.listingId);
+    const res = await api.post(`/api/ebay/publish-offer`, { offerId: offer.offerId }, { headers: getEbayHeaders() });
+    if (!res.data) return null;
+    await editPartListingId(offer.sku, Number(res.data.listingId));
   } catch (error) {
     console.error(error);
-    return null;
+    alert(`Error in [publishOffer] ${error}`);
+  }
+};
+
+export const withdrawOffer = async (offer: Offer) => {
+  try {
+    await api.post(`/api/ebay/withdraw-offer`, { offerId: offer.offerId }, { headers: getEbayHeaders() });
+    await editPartListingId(offer.sku, null);
+  } catch (error) {
+    console.error(error);
+    alert(`Error in [withdrawOffer] ${error}`);
   }
 };
 
@@ -181,9 +191,10 @@ export const editItemImageUrls = async (id: number, imageUrls: string[]) => {
 
 export const updateOffer = async (offer: Offer) => {
   try {
-    await api.put(`/api/ebay/update-offer`, offer);
+    await api.put(`/api/ebay/update-offer`, offer, { headers: getEbayHeaders() });
   } catch (error) {
     console.error(error);
+    alert(`Error in [updateOffer] ${error}`);
   }
 };
 
@@ -198,10 +209,12 @@ export const editBulkAddonItems = async (items: AddOnItem[]) => {
 
 // === DELETE routes === //
 
-export const deleteOffer = async (id: number) => {
+export const deleteOffer = async (offer: Offer) => {
   try {
-    await api.delete(`/api/ebay/offer/${id}`, { headers: getEbayHeaders() });
+    await api.delete(`/api/ebay/offer/${offer.offerId}`, { headers: getEbayHeaders() });
+    await editPartListingId(offer.sku, null);
   } catch (error) {
     console.error(error);
+    alert(`Error in [deleteOffer] ${error}`);
   }
 };

@@ -183,7 +183,7 @@ export default function Catalog() {
                 <td>
                   <Input
                     value={item.unitPrice || ''}
-                    onChange={(e: any) => onChangeEditItem({ ...item, unitPrice: e.target.value })}
+                    onChange={(e: any) => onChangeEditItem({ ...item, unitPrice: Number(e.target.value) })}
                     type="number"
                   />
                 </td>

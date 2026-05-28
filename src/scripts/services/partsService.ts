@@ -3,11 +3,11 @@ import api from "../config/axios";
 
 // === PATCH routes === //
 
-export const editPartOfferId = async (stockNum: string, offerId: number) => {
+export const editPartListingId = async (stockNum: string, offerId: number | null) => {
   try {
-    await api.patch('/api/parts/offer-id', { stockNum, offerId });
+    await api.patch('/api/parts/listing-id', { stockNum, offerId });
   } catch (error) {
     console.error(error);
-    alert(`Error in [editPartOfferId] ${error}`);
+    alert(`Error in [editPartListingId] ${error}`);
   }
 };
