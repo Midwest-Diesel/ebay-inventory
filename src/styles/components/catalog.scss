@@ -11,6 +11,11 @@
     margin-bottom: 1rem;
   }
 
+  &__content {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
   .dialog__content {
     text-align: center;
     overflow-y: auto;

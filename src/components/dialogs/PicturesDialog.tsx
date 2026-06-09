@@ -64,7 +64,7 @@ export default function PicturesDialog({ open, setOpen, pictures, stockNum, item
 
       { (pictures.length === 0 && !isFetching) && <Loading /> }
 
-      <div className="dialog__content">
+      <div className="pictures-dialog__content">
         {pictures.map((pic: Picture, i) => {
           const file = `${DIRECTORY}\\${pic.name}`;
           return (

@@ -1,7 +1,15 @@
 import PicturesDialog from "@/components/dialogs/PicturesDialog";
 import { Layout } from "@/components/Layout";
 import useAutoSave from "@/hooks/useAutoSave";
-import { createOffer, createOrReplaceInventoryItem, editBulkAddonItems, editItemImageUrls, editItemListingStatus, getAddonItems } from "@/scripts/services/ebayService";
+import {
+  createImageFromUrl,
+  createOffer,
+  createOrReplaceInventoryItem,
+  editBulkAddonItems,
+  editItemImageUrls,
+  editItemListingStatus,
+  getAddonItems
+} from "@/scripts/services/ebayService";
 import { getFileFromPath, getImagesFromStockNum, uploadImageToBucket } from "@/scripts/services/imagesService";
 import { Button, Input, Select, Table, TextArea } from "@midwest-diesel/mwd-ui";
 import { useQuery } from "@tanstack/react-query";
@@ -25,7 +33,7 @@ export default function Catalog() {
     queryKey: ['pictures', stockNumForPics],
     queryFn: () => getImagesFromStockNum(stockNumForPics),
     enabled: Boolean(stockNumForPics)
-  })
+  });
 
   useEffect(() => {
     if (itemsData && items.length === 0) {
@@ -45,8 +53,12 @@ export default function Catalog() {
     for (const img of item.localImages) {
       const file = await getFileFromPath(img);
       if (!file) continue;
-      const res = await uploadImageToBucket(file);
-      if (res) imageUrls.push(res.url);
+
+      const bucketRes = await uploadImageToBucket(file);
+      if (!bucketRes) continue;
+
+      const url = await createImageFromUrl(bucketRes.url);
+      if (url) imageUrls.push(url);
     }
 
     const catalogItem: CatalogItem = {
