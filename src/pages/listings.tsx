@@ -59,7 +59,6 @@ export default function Listings() {
     if (!item) return;
 
     await editItemListingStatus(item.id, 'PENDING');
-    setLoading(true);
     refetch();
   };
 
@@ -77,7 +76,6 @@ export default function Listings() {
           <thead>
             <tr>
               <th>SKU</th>
-              <th>Desc</th>
               <th>Available Qty</th>
               <th>Price</th>
               <th></th>
@@ -88,7 +86,6 @@ export default function Listings() {
               return (
                 <tr key={offer.sku}>
                   <td>{ offer.sku }</td>
-                  <td>{ offer.listingDescription }</td>
                   <td>{ offer.availableQuantity }</td>
                   <td>{ formatCurrency(offer.pricingSummary.price.value) }</td>
                   <td>

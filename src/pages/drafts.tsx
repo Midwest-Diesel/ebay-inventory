@@ -44,7 +44,7 @@ export default function Drafts() {
     }
 
     return `
-      <div style="max-width: 750px; height: 900px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; line-height: 1.6; color: #333;">
+      <div style="max-width: 750px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; line-height: 1.6; color: #333;">
         <header style="border:1px solid #000000;margin-bottom: 20px;">
           <img src="C:/Intel/ebayheader.jpg" style="width: 100%; height: auto; display: block;" alt="Product Banner" />
         </header>
@@ -56,11 +56,10 @@ export default function Drafts() {
           <p style="font-weight: bold;text-decoration: underline;">NEW 1607689 Caterpillar Plug</p>
 
           <div style="display: flex; flex-wrap: wrap; gap: 1%; justify-content: center; padding: 5px 0;">
-            ${item.product.imageUrls.map((img, i) => {
-              return (
-                `<img src="${img}" alt="Image ${i}" style="width: 22%; flex: 0 0 0; box-sizing: border-box; border-radius: 8px; object-fit: cover; aspect-ratio: 1 / 1;"></img>`
-              );
-            })}
+            ${item.product.imageUrls.map((img, i) =>
+              `<img src="${img}" alt="Image ${i}" style="width:22%;border-radius:8px;">`
+            )
+            .join('')}
           </div>
 
           <h2 style="font-size: 20px; margin: 25px 0 12px 0; border-bottom: 2px solid #F7CB27; padding-bottom: 8px;">

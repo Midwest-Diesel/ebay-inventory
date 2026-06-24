@@ -23,6 +23,7 @@ export default function Catalog() {
   const [items, setItems] = useState<AddOnItem[]>([]);
   const [picturesDialogOpen, setPicturesDialogOpen] = useState(false);
   const [stockNumForPics, setStockNumForPics] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const { data: itemsData } = useQuery<AddOnItem[]>({
     queryKey: ['items'],
@@ -49,6 +50,8 @@ export default function Catalog() {
   };
 
   const onClickAddItem = async (item: AddOnItem) => {
+    setLoading(true);
+
     const imageUrls: string[] = [];
     for (const img of item.localImages) {
       const file = await getFileFromPath(img);
@@ -113,6 +116,8 @@ export default function Catalog() {
       }
     };
     await createOffer(unpublishedOffer);
+
+    setLoading(false);
   };
 
   const onClickOpenPictures = (stockNum: string) => {
@@ -131,6 +136,8 @@ export default function Catalog() {
     await editBulkAddonItems(items.map((i) => ({ ...i, qty: Number(i.qty) })));
   }, { ignoreFirstSave: true });
   
+
+  if (loading) return <Layout><h1>Pending Items</h1> <p>Loading...</p></Layout>;
 
   return (
     <Layout>
