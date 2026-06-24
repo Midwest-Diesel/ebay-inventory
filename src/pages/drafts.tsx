@@ -130,7 +130,7 @@ export default function Drafts() {
         fulfillmentPolicyId: FULFILLMENT_POLICY_ID,
         paymentPolicyId: FULFILLMENT_POLICY_ID
       },
-      includeCatalogProductDetails : true,
+      includeCatalogProductDetails : false,
       merchantLocationKey: 'warehouse',
       listingDescription: await getListingDescription(offer)
     };
