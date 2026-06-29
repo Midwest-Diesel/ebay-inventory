@@ -106,6 +106,7 @@ type Offer = {
   listingPolicies: {
     fulfillmentPolicyId: number
     paymentPolicyId: number
+    returnPolicyId: number
   }
   includeCatalogProductDetails: boolean
   pricingSummary: {

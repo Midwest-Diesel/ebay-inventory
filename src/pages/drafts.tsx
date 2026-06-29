@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 
 
 const FULFILLMENT_POLICY_ID = import.meta.env.PROD ? 287416755015 : 6228403000;
+const PAYMENT_POLICY_ID = import.meta.env.PROD ? 287416206015 : 6228403000;
+const RETURN_POLICY_ID = import.meta.env.PROD ? 287416718015 : 287416718015;
 
 export default function Drafts() {
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -128,7 +130,8 @@ export default function Drafts() {
       ...offer,
       listingPolicies: {
         fulfillmentPolicyId: FULFILLMENT_POLICY_ID,
-        paymentPolicyId: FULFILLMENT_POLICY_ID
+        paymentPolicyId: PAYMENT_POLICY_ID,
+        returnPolicyId: RETURN_POLICY_ID
       },
       includeCatalogProductDetails : false,
       merchantLocationKey: 'warehouse',
