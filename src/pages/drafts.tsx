@@ -8,8 +8,8 @@ import { useEffect, useState } from "react";
 
 
 const FULFILLMENT_POLICY_ID = import.meta.env.PROD ? 287416755015 : 6228403000;
-const PAYMENT_POLICY_ID = import.meta.env.PROD ? 287416206015 : 6228403000;
-const RETURN_POLICY_ID = import.meta.env.PROD ? 287416718015 : 287416718015;
+const PAYMENT_POLICY_ID = import.meta.env.PROD ? 287416206015 : 6228401000;
+const RETURN_POLICY_ID = import.meta.env.PROD ? 287416718015 : 6228402000;
 
 export default function Drafts() {
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -47,8 +47,12 @@ export default function Drafts() {
 
     return `
       <div style="max-width: 750px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; line-height: 1.6; color: #333;">
-        <header style="border:1px solid #000000;margin-bottom: 20px;">
-          <img src="C:/Intel/ebayheader.jpg" style="width: 100%; height: auto; display: block;" alt="Product Banner" />
+        <header style="border:1px solid #000000; border-radius:5px; margin-bottom: 20px;">
+          <img
+            src="https://i.sandbox.ebayimg.com/00/s/MTk4WDg0Mw==/z/G3MAAeSwbyZqQuM9/$_1.JPG?set_id=8800005007"
+            style="width: 100%; height: auto; display: block;"
+            alt="Product Banner"
+          />
         </header>
 
         <div style="border:1px solid #b9b0b0;border-radius:5px;padding:15px;">
