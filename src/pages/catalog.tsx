@@ -1,4 +1,5 @@
 import PicturesDialog from "@/components/dialogs/PicturesDialog";
+import PricingDialog from "@/components/dialogs/PricingDialog";
 import { Layout } from "@/components/Layout";
 import useAutoSave from "@/hooks/useAutoSave";
 import {
@@ -23,6 +24,7 @@ export default function Catalog() {
   const [items, setItems] = useState<AddOnItem[]>([]);
   const [picturesDialogOpen, setPicturesDialogOpen] = useState(false);
   const [stockNumForPics, setStockNumForPics] = useState('');
+  const [pricingItem, setPricingItem] = useState<AddOnItem | null>(null);
   const [loading, setLoading] = useState(false);
 
   const { data: itemsData } = useQuery<AddOnItem[]>({
@@ -152,6 +154,15 @@ export default function Catalog() {
           isFetching={isFetching}
         />
       }
+
+      {pricingItem &&
+        <PricingDialog
+          open={!!pricingItem}
+          setOpen={() => setPricingItem(null)}
+          item={pricingItem}
+        />
+      }
+
       <h1>Pending Items</h1>
 
       <Table className="catalog-table">
@@ -194,17 +205,28 @@ export default function Catalog() {
                 <td style={{ textAlign: 'center' }}>{ item.addonQty }</td>
                 <td>
                   <Input
+                    variant={['x-small']}
                     value={item.qty || ''}
                     onChange={(e: any) => onChangeEditItem({ ...item, qty: e.target.value })}
                     type="number"
                   />
                 </td>
                 <td>
-                  <Input
-                    value={item.unitPrice || ''}
-                    onChange={(e: any) => onChangeEditItem({ ...item, unitPrice: Number(e.target.value) })}
-                    type="number"
-                  />
+                  <div style={{ display: 'flex', gap: '0.3rem' }}>
+                    <Input
+                      variant={['small']}
+                      value={item.unitPrice || ''}
+                      onChange={(e: any) => onChangeEditItem({ ...item, unitPrice: Number(e.target.value) })}
+                      type="number"
+                    />
+
+                    <Button
+                      variant={['fit', 'center']}
+                      onClick={() => setPricingItem(item)}
+                    >
+                      Pricing
+                    </Button>
+                  </div>
                 </td>
                 <td>
                   <Select

@@ -43,6 +43,9 @@ type AddOnItem = {
   addonQty: number
   qty: number
   unitPrice: number
+  newListPrice: number
+  remanListPrice: number
+  dealerPrice: number
   localImages: string[]
   imageUrls: string[]
   createdAt: Date
