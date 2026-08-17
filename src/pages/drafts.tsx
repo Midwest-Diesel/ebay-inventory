@@ -144,8 +144,6 @@ export default function Drafts() {
     await updateOffer(data);
     await publishOffer(data);
     setLoading(() => false);
-
-    setLoading(() => true);
     refetch();
   };
 

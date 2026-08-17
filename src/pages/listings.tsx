@@ -47,7 +47,7 @@ export default function Listings() {
     await withdrawOffer(offer);
     setLoading(() => false);
 
-    setLoading(() => true);
+    if (!import.meta.env.PROD) location.reload();
     refetch();
   };
 
@@ -59,6 +59,8 @@ export default function Listings() {
     if (!item) return;
 
     await editItemListingStatus(item.id, 'PENDING');
+    
+    if (!import.meta.env.PROD) location.reload();
     refetch();
   };
 
