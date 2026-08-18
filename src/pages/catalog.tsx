@@ -2,10 +2,12 @@ import PicturesDialog from "@/components/dialogs/PicturesDialog";
 import PricingDialog from "@/components/dialogs/PricingDialog";
 import { Layout } from "@/components/Layout";
 import useAutoSave from "@/hooks/useAutoSave";
+import { ask } from "@/scripts/config/tauri";
 import {
   createImageFromUrl,
   createOffer,
   createOrReplaceInventoryItem,
+  deleteAddonItem,
   editBulkAddonItems,
   editItemImageUrls,
   editItemListingStatus,
@@ -27,7 +29,7 @@ export default function Catalog() {
   const [pricingItem, setPricingItem] = useState<AddOnItem | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const { data: itemsData } = useQuery<AddOnItem[]>({
+  const { data: itemsData, refetch } = useQuery<AddOnItem[]>({
     queryKey: ['items'],
     queryFn: () => getAddonItems('PENDING')
   });
@@ -95,7 +97,10 @@ export default function Catalog() {
     };
     
     const error = await createOrReplaceInventoryItem(catalogItem);
-    if (error) return;
+    if (error) {
+      setLoading(false);
+      return;
+    }
 
     await editItemListingStatus(item.id, 'COMPLETE');
     await editItemImageUrls(item.id, imageUrls);
@@ -120,6 +125,13 @@ export default function Catalog() {
     await createOffer(unpublishedOffer);
 
     setLoading(false);
+  };
+
+  const onClickDeleteItem = async (item: AddOnItem) => {
+    if (!await ask(`Delete ${item.stockNum}?`)) return;
+
+    await deleteAddonItem(item.id);
+    setItems(items.filter((i) => i.id !== item.id));
   };
 
   const onClickOpenPictures = (stockNum: string) => {
@@ -254,7 +266,12 @@ export default function Catalog() {
                     <img src="/images/image.svg" alt="" />
                   </Button>
                 </td>
-                <td><Button onClick={() => onClickAddItem(item)}>Add</Button></td>
+                <td>
+                  <div style={{ display: 'flex', gap: '0.2rem' }}>
+                    <Button onClick={() => onClickAddItem(item)}>Add</Button>
+                    <Button variant={['danger']} onClick={() => onClickDeleteItem(item)}>Delete</Button>
+                  </div>
+                </td>
               </tr>
             );
           })}

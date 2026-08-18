@@ -228,6 +228,15 @@ export const editAddonItem = async (id: number, qty: number) => {
 
 // === DELETE routes === //
 
+export const deleteAddonItem = async (id: number) => {
+  try {
+    await api.delete(`/api/ebay/item/${id}`);
+  } catch (error) {
+    console.error(error);
+    alert(`Error in [deleteAddonItem] ${error}`);
+  }
+};
+
 export const deleteOffer = async (offer: Offer) => {
   try {
     await api.delete(`/api/ebay/offer/${offer.offerId}`);
