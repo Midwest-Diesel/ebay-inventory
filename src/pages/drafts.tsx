@@ -2,7 +2,7 @@ import { Layout } from "@/components/Layout";
 import { ask } from "@/scripts/config/tauri";
 import { deleteOffer, editItemListingStatus, getAddonItemFromSku, getInventoryItemBySku, getInventoryItems, getOfferBySku, publishOffer, updateOffer } from "@/scripts/services/ebayService";
 import { formatCurrency } from "@/scripts/tools/stringUtils";
-import { Button, Table } from "@midwest-diesel/mwd-ui";
+import { Button, Loading, Table } from "@midwest-diesel/mwd-ui";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
@@ -167,7 +167,7 @@ export default function Drafts() {
       <h1>Drafts</h1>
 
       {loading ?
-        <p>Loading...</p>
+        <Loading />
       :
         <Table className="catalog-table">
           <thead>

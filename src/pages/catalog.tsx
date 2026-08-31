@@ -14,7 +14,7 @@ import {
   getAddonItems
 } from "@/scripts/services/ebayService";
 import { getFileFromPath, getImagesFromStockNum, uploadImageToBucket } from "@/scripts/services/imagesService";
-import { Button, Input, Select, Table, TextArea } from "@midwest-diesel/mwd-ui";
+import { Button, Input, Loading, Select, Table, TextArea } from "@midwest-diesel/mwd-ui";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
@@ -151,7 +151,7 @@ export default function Catalog() {
   }, { ignoreFirstSave: true });
   
 
-  if (loading) return <Layout><h1>Pending Items</h1> <p>Loading...</p></Layout>;
+  if (loading) return <Layout><h1>Pending Items</h1> <Loading /></Layout>;
 
   return (
     <Layout>

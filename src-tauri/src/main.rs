@@ -1,8 +1,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::fs;
-use std::{fs::remove_file, process::Command, env};
-use std::{fs::File, io::copy};
+use std::fs::{self, File, create_dir, remove_dir_all, remove_file};
+use std::{process::Command, env};
+use std::{io::copy};
 use std::io::{self, Write};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
@@ -85,6 +85,9 @@ async fn install_update() {
 }
 
 async fn download_update() -> Result<(), Box<dyn std::error::Error>> {
+  let _ = remove_dir_all("C:/MWD/repos/content/ebay-inventory/updates");
+  let _ = create_dir("C:/MWD/repos/content/ebay-inventory/updates");
+
   let (product_name, update_json_url, install_dir) = (
       "eBay-Inventory",
       "https://raw.githubusercontent.com/Midwest-Diesel/ebay-inventory/refs/heads/main/latest.json",

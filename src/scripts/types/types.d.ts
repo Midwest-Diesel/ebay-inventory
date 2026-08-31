@@ -1,7 +1,3 @@
-declare module '@midwest-diesel/mwd-ui' {
-  export * from '@midwest-diesel/mwd-ui/dist/index.d.ts';
-}
-
 type User = {
   id: number
   username: string

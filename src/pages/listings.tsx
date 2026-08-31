@@ -1,7 +1,7 @@
 import { Layout } from "@/components/Layout";
 import { deleteOffer, editItemListingStatus, getAddonItemFromSku, getInventoryItems, getOfferBySku, withdrawOffer } from "@/scripts/services/ebayService";
 import { formatCurrency } from "@/scripts/tools/stringUtils";
-import { Button, Table } from "@midwest-diesel/mwd-ui";
+import { Button, Loading, Table } from "@midwest-diesel/mwd-ui";
 import { useQuery } from "@tanstack/react-query";
 import { ask } from "@tauri-apps/plugin-dialog";
 import { useEffect, useState } from "react";
@@ -59,7 +59,7 @@ export default function Listings() {
     if (!item) return;
 
     await editItemListingStatus(item.id, 'PENDING');
-    
+
     if (!import.meta.env.PROD) location.reload();
     refetch();
   };
@@ -72,7 +72,7 @@ export default function Listings() {
       <h1>Listings</h1>
 
       {loading ?
-        <p>Loading...</p>
+        <Loading />
       :
         <Table className="catalog-table">
           <thead>

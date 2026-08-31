@@ -1,5 +1,5 @@
 import { invoke } from "@/scripts/config/tauri";
-import { Button, Modal } from "@midwest-diesel/mwd-ui";
+import { Button, Loading, Modal } from "@midwest-diesel/mwd-ui";
 import { useState } from "react";
 
 interface Props {
@@ -30,7 +30,7 @@ export default function UpdateModal({ open, notes }: Props) {
         >
           <div className="form__footer">
             { showBtn && <Button onClick={handleUpdate}>Install and restart</Button> }
-            { !showBtn && <p>Loading...</p> }
+            { !showBtn && <Loading /> }
           </div>
 
           {notes &&
