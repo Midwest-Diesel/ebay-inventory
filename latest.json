@@ -1,11 +1,11 @@
 {
-  "version": "v0.8.2",
-  "pub_date": "2026-08-31T19:47:15Z",
-  "notes": "",
+  "pub_date": "2026-10-20T19:09:47Z",
+  "notes": "Release v0.8.3",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSYXQxaWtWaFNYeHdXNWNLS2IyRWlQWTZzRjlwSkV4VTJPa1o4dDE0bFRwa0JHcVdIOFZNVW14eGJXYTdSSHVpa3UzUU8yNVpZU3JlWWk0SFFXaGk0MDhONlY2SXZ3S2dBPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg4MjA1NjM0CWZpbGU6ZUJheS1JbnZlbnRvcnlfMC44LjJfeDY0LXNldHVwLmV4ZQp1RkhKczROUW82UmRHL3d4Q1hsNGF0SVNnNTNGaDAyM3hVUFZzaWVxNk9RNUhCNDcyWFNYcDg1bWdxZkRzR21xZkVrRmxXZjNsci9udGppekFVR1lBZz09Cg==",
-      "url": "https://github.com/Midwest-Diesel/ebay-inventory/releases/download/v0.8.2/eBay-Inventory_0.8.2_x64-setup.nsis.zip"
+      "url": "https://github.com/Midwest-Diesel/ebay-inventory/releases/download/v0.8.3/eBay-Inventory_0.8.3_x64-setup.exe",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSYXQxaWtWaFNYeHd6RUtkTHhWTElVM2F2YnF6eWlhS0dPVHFBMWVjd3o3WWd4akhHYnBDRWRwUzM4aU8zT2xqUHhLK3R4YzN0eHZNV3YwTDNDVkVGN1IrbFpLc2pwUGdzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyNTIzMzgxCWZpbGU6ZUJheS1JbnZlbnRvcnlfMC44LjNfeDY0LXNldHVwLmV4ZQl2ZXJzaW9uOjAuOC4zCnN3eUlMb3BFOVVOTDhNM3hkbmoySXo4R2xqN1ZMcjUxekVtYVdTbzAvNzhrdTN3bHpwTWNWSHhBai9FblRsYWFXNXduSmw3UkRvdGdNd3NvZXZxRkFRPT0K"
     }
-  }
+  },
+  "version": "0.8.3"
 }
